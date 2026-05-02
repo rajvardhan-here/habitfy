@@ -6,6 +6,10 @@ import HabitTracker from './HabitTracker'
 import Finance from './Finance'
 import Journal from './Journal'
 
+const GREEN = '#285E2C'
+const YELLOW = '#FFE67C'
+const YELLOW_DARK = '#C9A800'
+
 const navItems = [
   { icon: '⊞', label: 'Habit Tracker', path: '/habits' },
   { icon: '◫', label: 'Finance', path: '/finance' },
@@ -26,28 +30,33 @@ export default function Dashboard() {
     await supabase.auth.signOut()
   }
 
-  return (
-    <div className="flex min-h-screen" style={{ background: '#EEF4FF' }}>
+  const firstName = user?.user_metadata?.name?.split(' ')[0] || 'User'
 
-      {/* Sidebar — hover to expand */}
+  return (
+    <div className="flex min-h-screen" style={{ background: YELLOW }}>
+
+      {/* Sidebar */}
       <motion.div
         onMouseEnter={() => setExpanded(true)}
         onMouseLeave={() => setExpanded(false)}
         animate={{ width: expanded ? 180 : 64 }}
         transition={{ duration: 0.2, ease: 'easeInOut' }}
         className="flex flex-col py-6 z-50 fixed top-0 left-0 h-screen overflow-hidden"
-        style={{ background: 'white', boxShadow: '2px 0 12px rgba(0,0,0,0.06)' }}>
+        style={{
+          background: GREEN,
+          boxShadow: '2px 0 16px rgba(40,94,44,0.25)',
+          borderRight: '1px solid rgba(40,94,44,0.3)'
+        }}>
 
         {/* Logo */}
-        <div className="flex items-center gap-3 mb-8 px-3">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-            style={{ background: 'linear-gradient(135deg, #4A90E2, #2563EB)' }}>
-            <span className="text-white font-black text-xl">✦</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 32, padding: '0 12px' }}>
+          <div style={{ width: 40, height: 40, borderRadius: 12, background: YELLOW, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 2px 10px rgba(255,230,124,0.4)' }}>
+            <span style={{ color: GREEN, fontWeight: 900, fontSize: 18 }}>✦</span>
           </div>
           <AnimatePresence>
             {expanded && (
               <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                style={{ fontSize: 16, fontWeight: 800, color: '#0F172A', whiteSpace: 'nowrap' }}>
+                style={{ fontSize: 16, fontWeight: 800, color: YELLOW, whiteSpace: 'nowrap' }}>
                 Habitfy
               </motion.span>
             )}
@@ -55,18 +64,23 @@ export default function Dashboard() {
         </div>
 
         {/* Nav Items */}
-        <div className="flex flex-col gap-1 px-2 flex-1">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, padding: '0 8px', flex: 1 }}>
           {navItems.map((item) => {
             const active = location.pathname === item.path
             return (
               <button key={item.path} onClick={() => navigate(item.path)}
-                className="flex items-center gap-3 rounded-xl px-3 py-3 transition-all text-left"
-                style={{ background: active ? '#EEF4FF' : 'transparent', border: 'none', whiteSpace: 'nowrap' }}>
-                <span style={{ fontSize: 18, color: active ? '#2563EB' : '#94A3B8', flexShrink: 0 }}>{item.icon}</span>
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 12,
+                  borderRadius: 12, padding: '10px 12px',
+                  background: active ? 'rgba(255,230,124,0.18)' : 'transparent',
+                  border: active ? '1px solid rgba(255,230,124,0.4)' : '1px solid transparent',
+                  cursor: 'pointer', whiteSpace: 'nowrap', textAlign: 'left'
+                }}>
+                <span style={{ fontSize: 18, color: active ? YELLOW : 'rgba(255,230,124,0.6)', flexShrink: 0 }}>{item.icon}</span>
                 <AnimatePresence>
                   {expanded && (
                     <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                      style={{ fontSize: 13, fontWeight: 600, color: active ? '#2563EB' : '#64748B' }}>
+                      style={{ fontSize: 13, fontWeight: 600, color: active ? YELLOW : 'rgba(255,230,124,0.7)' }}>
                       {item.label}
                     </motion.span>
                   )}
@@ -76,11 +90,24 @@ export default function Dashboard() {
           })}
         </div>
 
-        {/* Logout at bottom */}
-        <div className="px-2 pb-2">
+        {/* Bottom */}
+        <div style={{ padding: '0 8px' }}>
+          <AnimatePresence>
+            {expanded && user && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                style={{ padding: '8px 12px', marginBottom: 4, borderRadius: 12, background: 'rgba(255,230,124,0.12)', border: '1px solid rgba(255,230,124,0.25)' }}>
+                <p style={{ fontSize: 12, fontWeight: 700, color: YELLOW, margin: 0 }}>{firstName} ji</p>
+                <p style={{ fontSize: 10, color: 'rgba(255,230,124,0.6)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.email}</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
           <button onClick={handleLogout}
-            className="flex items-center gap-3 rounded-xl px-3 py-3 w-full transition-all"
-            style={{ border: 'none', background: 'transparent', whiteSpace: 'nowrap' }}>
+            style={{
+              display: 'flex', alignItems: 'center', gap: 12,
+              borderRadius: 12, padding: '10px 12px', width: '100%',
+              background: 'transparent', border: '1px solid transparent',
+              cursor: 'pointer', whiteSpace: 'nowrap'
+            }}>
             <span style={{ fontSize: 18, flexShrink: 0 }}>🚪</span>
             <AnimatePresence>
               {expanded && (
@@ -95,7 +122,7 @@ export default function Dashboard() {
       </motion.div>
 
       {/* Main */}
-      <div className="flex-1" style={{ marginLeft: 64 }}>
+      <div style={{ flex: 1, marginLeft: 64 }}>
         <Routes>
           <Route path="/" element={<Navigate to="/habits" replace />} />
           <Route path="/habits" element={<HabitTracker user={user} onLogout={handleLogout} />} />
