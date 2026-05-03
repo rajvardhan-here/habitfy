@@ -164,14 +164,14 @@ export default function Finance() {
             <input value={form.description} onChange={e => setForm({ ...form, description: e.target.value })}
               placeholder="What did you spend on?"
               style={inputStyle} />
-            <div style={{ display: 'flex', gap: 8 }}>
+            <div style={{ display: 'flex', gap: 40 }}>
               <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}
                 style={{ ...inputStyle, flex: 1 }}>
                 {categories.map(c => <option key={c}>{c}</option>)}
               </select>
               <input value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })}
                 placeholder="₹" type="number"
-                style={{ ...inputStyle, width: 80 }} />
+                style={{ ...inputStyle, width: 320 }} />
             </div>
             <button onClick={addExpense}
               style={{ borderRadius: 12, padding: '10px', fontSize: 13, fontWeight: 700, color: YELLOW, background: GREEN, border: 'none', cursor: 'pointer' }}>
