@@ -2,6 +2,9 @@ import { useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { motion } from 'framer-motion'
 
+const GREEN = '#285E2C'
+const YELLOW = '#FFE67C'
+
 export default function Login() {
   const [loading, setLoading] = useState(false)
 
@@ -18,7 +21,7 @@ export default function Login() {
     { icon: '∞', label: 'Habits' },
     { icon: '🔥', label: 'Streaks' },
     { icon: '₹', label: 'Finance' },
-    { icon: '👥', label: 'Friends' },
+    { icon: '📓', label: 'Notes' },
   ]
 
   const floaters = [
@@ -34,135 +37,87 @@ export default function Login() {
     { emoji: '🔥', x: '49%', y: '89%', duration: 4, delay: 0.4 },
   ]
 
+  const floatingCards = [
+    { content: <><p style={{fontSize:10,fontWeight:700,color:'white',margin:'0 0 4px 0'}}>DAILY PROGRESS</p><div style={{width:'100%',height:6,borderRadius:99,background:'rgba(255,255,255,0.3)'}}><motion.div style={{height:6,borderRadius:99,background:YELLOW}} initial={{width:0}} animate={{width:'72%'}} transition={{duration:1.5}}/></div><p style={{fontSize:10,marginTop:4,color:'rgba(255,255,255,0.9)',margin:'4px 0 0 0'}}>72% done</p></>, pos:{left:'3%',top:'20%'}, anim:{y:[0,-8,0]}, dur:4 },
+    { content: <><p style={{fontSize:20,textAlign:'center',margin:0}}>🔥</p><p style={{fontSize:11,fontWeight:900,textAlign:'center',color:'white',margin:'2px 0 0 0'}}>14 days</p><p style={{fontSize:9,textAlign:'center',color:'rgba(255,255,255,0.8)',margin:0}}>streak!</p></>, pos:{right:'5%',top:'18%'}, anim:{y:[0,-10,0]}, dur:5 },
+    { content: <><p style={{fontSize:10,fontWeight:700,color:'white',margin:'0 0 6px 0'}}>This week</p><div style={{display:'flex',alignItems:'flex-end',gap:3,height:32}}>{[30,50,35,70,55,90,65].map((h,i)=><motion.div key={i} style={{width:8,borderRadius:'2px 2px 0 0',background:YELLOW}} initial={{height:0}} animate={{height:`${h}%`}} transition={{duration:0.8,delay:i*0.1}}/>)}</div></>, pos:{left:'4%',bottom:'22%'}, anim:{y:[0,8,0]}, dur:4.5 },
+    { content: <><p style={{fontSize:10,fontWeight:700,color:'white',margin:0}}>Budget left</p><p style={{fontSize:18,fontWeight:900,color:YELLOW,margin:'2px 0 0 0'}}>₹2,450</p><p style={{fontSize:9,color:'rgba(255,255,255,0.8)',margin:0}}>of ₹5,000</p></>, pos:{right:'4%',bottom:'24%'}, anim:{y:[0,8,0]}, dur:5 },
+  ]
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 relative overflow-hidden font-sans"
-      style={{ background: 'linear-gradient(180deg, #A7D1F7 0%, #C1E1FF 100%)' }}>
-      
-      {/* 1. Floating Background Emojis */}
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 16px', position: 'relative', overflow: 'hidden', background: `linear-gradient(135deg, ${GREEN} 0%, #3a7a3e 50%, #285E2C 100%)`, fontFamily: "'Inter', sans-serif" }}>
+
+      {/* Floating emojis */}
       {floaters.map((f, i) => (
         <motion.div key={i}
-          className="absolute text-2xl md:text-3xl select-none pointer-events-none opacity-80"
-          style={{ left: f.x, top: f.y }}
+          style={{ position: 'absolute', left: f.x, top: f.y, fontSize: 28, userSelect: 'none', pointerEvents: 'none', opacity: 0.6 }}
           animate={{ y: [0, -15, 0], rotate: [0, 5, -5, 0] }}
           transition={{ duration: f.duration, repeat: Infinity, delay: f.delay, ease: 'easeInOut' }}>
           {f.emoji}
         </motion.div>
       ))}
 
-      {/* 2. Progress Card (Top Left) */}
-      <motion.div
-        className="absolute rounded-2xl p-3 pointer-events-none z-0"
-        style={{ left: '3%', top: '20%', background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.5)', minWidth: 130 }}
-        animate={{ y: [0, -8, 0] }}
-        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}>
-        <p className="text-[10px] uppercase font-bold text-white mb-1">Daily Progress</p>
-        <div className="w-full bg-white/30 h-1.5 rounded-full overflow-hidden">
-          <motion.div className="bg-white h-full" 
-            initial={{ width: 0 }} animate={{ width: '72%' }} transition={{ duration: 1.5 }} />
-        </div>
-        <p className="text-[10px] mt-1 text-white/90">72% done</p>
-      </motion.div>
+      {/* Floating cards */}
+      {floatingCards.map((card, i) => (
+        <motion.div key={i}
+          style={{ position: 'absolute', ...card.pos, background: 'rgba(255,255,255,0.12)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.25)', borderRadius: 16, padding: 12, minWidth: 120, pointerEvents: 'none', zIndex: 0 }}
+          animate={card.anim}
+          transition={{ duration: card.dur, repeat: Infinity, ease: 'easeInOut' }}>
+          {card.content}
+        </motion.div>
+      ))}
 
-      {/* 3. Streak Card (Top Right) */}
-      <motion.div
-        className="absolute rounded-2xl p-3 pointer-events-none z-0"
-        style={{ right: '5%', top: '18%', background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.5)' }}
-        animate={{ y: [0, -10, 0] }}
-        transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}>
-        <p className="text-xl text-center">🔥</p>
-        <p className="text-[11px] font-black text-center text-white">14 days</p>
-        <p className="text-[9px] text-center text-white/80">streak!</p>
-      </motion.div>
-
-      {/* 4. Graph Card (Bottom Left) */}
-      <motion.div
-        className="absolute rounded-2xl p-3 pointer-events-none z-0"
-        style={{ left: '4%', bottom: '22%', background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.5)' }}
-        animate={{ y: [0, 8, 0] }}
-        transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 1 }}>
-        <p className="text-[10px] font-bold text-white mb-2">This week</p>
-        <div className="flex items-end gap-1 h-8">
-          {[30, 50, 35, 70, 55, 90, 65].map((h, i) => (
-            <motion.div key={i} className="w-2 rounded-t-sm bg-white"
-              initial={{ height: 0 }} animate={{ height: `${h}%` }} transition={{ duration: 0.8, delay: i * 0.1 }} />
-          ))}
-        </div>
-      </motion.div>
-
-      {/* 5. Budget Card (Bottom Right) */}
-      <motion.div
-        className="absolute rounded-2xl p-3 pointer-events-none z-0"
-        style={{ right: '4%', bottom: '24%', background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.5)', minWidth: 120 }}
-        animate={{ y: [0, 8, 0] }}
-        transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 0.7 }}>
-        <p className="text-[10px] font-bold text-white">Budget left</p>
-        <p className="text-lg font-black text-white">₹2,450</p>
-        <p className="text-[9px] text-white/80">of ₹5,000</p>
-      </motion.div>
-
-      {/* MAIN CENTER CARD */}
+      {/* Main card */}
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        whileHover={{ 
-          y: -8, 
-          scale: 1.02,
-          transition: { type: "spring", stiffness: 400, damping: 10 } 
-        }}
-        className="relative z-10 rounded-[35px] p-8 w-full max-w-[340px] text-center"
-        style={{
-          background: '#96AD94',
-          boxShadow: `
-            0 30px 60px -12px rgba(0, 0, 0, 0.4), 
-            0 18px 36px -18px rgba(0, 0, 0, 0.5)
-          `
-        }}>
+        whileHover={{ y: -6, scale: 1.02, transition: { type: 'spring', stiffness: 400, damping: 10 } }}
+        style={{ position: 'relative', zIndex: 10, borderRadius: 32, padding: 32, width: '100%', maxWidth: 340, textAlign: 'center', background: YELLOW, boxShadow: '0 30px 60px -12px rgba(0,0,0,0.5)' }}>
 
+        {/* Logo */}
         <motion.div whileHover={{ rotate: 15 }}
-          className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 cursor-pointer"
-          style={{ background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.3)' }}>
-          <span className="text-xl font-bold text-white">H</span>
+          style={{ width: 56, height: 56, borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', background: GREEN, boxShadow: '0 4px 16px rgba(40,94,44,0.4)', cursor: 'pointer' }}>
+          <span style={{ fontSize: 22, fontWeight: 900, color: YELLOW }}>H</span>
         </motion.div>
 
-        <h1 className="text-3xl font-bold mb-1 text-white">Habitfy</h1>
-        <p className="text-xs mb-6 text-white/70">Track habits. Build streaks. Live better.</p>
+        <h1 style={{ fontSize: 28, fontWeight: 900, color: GREEN, margin: '0 0 4px 0' }}>Habitfy</h1>
+        <p style={{ fontSize: 12, color: 'rgba(40,94,44,0.7)', marginBottom: 24, margin: '0 0 24px 0' }}>Track habits. Build streaks. Live better.</p>
 
-        {/* Features Box */}
-        <div className="mb-6 p-4 rounded-2xl"
-          style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.1)' }}>
-          <p className="text-[9px] font-bold mb-4 tracking-widest text-white/60">FREE FOR STUDENTS</p>
-          <div className="flex justify-between px-1">
+        {/* Features */}
+        <div style={{ marginBottom: 24, padding: 16, borderRadius: 20, background: 'rgba(40,94,44,0.1)', border: '1px solid rgba(40,94,44,0.15)' }}>
+          <p style={{ fontSize: 9, fontWeight: 700, marginBottom: 16, letterSpacing: 1.5, color: 'rgba(40,94,44,0.6)', margin: '0 0 14px 0' }}>FREE FOR STUDENTS</p>
+          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0 4px' }}>
             {features.map((f, i) => (
-              <motion.div key={i} whileHover={{ y: -5, scale: 1.1 }} className="flex flex-col items-center gap-1 cursor-pointer group">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg bg-white/20 border border-white/10 group-hover:bg-white/30 transition-colors">
+              <motion.div key={i} whileHover={{ y: -5, scale: 1.1 }}
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, cursor: 'pointer' }}>
+                <div style={{ width: 40, height: 40, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, background: 'rgba(40,94,44,0.12)', border: '1px solid rgba(40,94,44,0.15)' }}>
                   {f.icon}
                 </div>
-                <span className="text-[9px] font-bold text-white/80">{f.label}</span>
+                <span style={{ fontSize: 9, fontWeight: 700, color: 'rgba(40,94,44,0.8)' }}>{f.label}</span>
               </motion.div>
             ))}
           </div>
         </div>
 
-        {/* Google Button */}
+        {/* Google button */}
         <motion.button
-          whileHover={{ scale: 1.04, boxShadow: "0 10px 20px rgba(0,0,0,0.15)" }}
+          whileHover={{ scale: 1.04, boxShadow: '0 10px 25px rgba(40,94,44,0.3)' }}
           whileTap={{ scale: 0.96 }}
           onClick={handleGoogleLogin}
           disabled={loading}
-          className="w-full flex items-center justify-center gap-3 rounded-xl py-3.5 bg-white"
-        >
-          <img src="https://www.google.com/favicon.ico" className="w-4 h-4" alt="G" />
-          <span className="font-bold text-gray-800 text-sm">
+          style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, borderRadius: 14, padding: '14px 0', background: GREEN, border: 'none', cursor: 'pointer', boxShadow: '0 4px 16px rgba(40,94,44,0.3)' }}>
+          <img src="https://www.google.com/favicon.ico" style={{ width: 16, height: 16, background: 'white', borderRadius: '50%', padding: 2 }} alt="G" />
+          <span style={{ fontSize: 14, fontWeight: 700, color: YELLOW }}>
             {loading ? 'Processing...' : 'Continue with Google'}
           </span>
         </motion.button>
 
-        <p className="text-[10px] mt-4 text-white/40">Free forever · No credit card needed</p>
+        <p style={{ fontSize: 10, marginTop: 12, color: 'rgba(40,94,44,0.5)', margin: '12px 0 0 0' }}>Free forever · No credit card needed</p>
       </motion.div>
 
-      {/* Footer Credit */}
-      <motion.div whileHover={{ scale: 1.05 }} className="absolute bottom-6 opacity-50">
-        <span className="text-[10px] font-bold text-gray-600">Made with 💙 by Rajvardhan</span>
+      {/* Footer */}
+      <motion.div whileHover={{ scale: 1.05 }} style={{ position: 'absolute', bottom: 20, opacity: 0.6 }}>
+        <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.7)' }}>Made with 💚 by Rajvardhan</span>
       </motion.div>
     </div>
   )
