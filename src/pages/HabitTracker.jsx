@@ -6,14 +6,11 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianG
 const HABIT_ICONS = ['💪', '📚', '💻', '✍️', '🧘', '🎯', '🏃', '🎨', '🎵', '💡']
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
-const ROW_HEIGHT = 220
-
 const GREEN = '#285E2C'
 const GREEN_LIGHT = '#E8F5E9'
 const YELLOW = '#FFE67C'
-const YELLOW_DARK = '#C9A800'
 
-function LiquidProgress({ percent }) {
+function CircularProgress({ percent }) {
   const r = 38
   const circ = 2 * Math.PI * r
   const offset = circ - (percent / 100) * circ
@@ -53,6 +50,7 @@ export default function HabitTracker({ user: propUser, onLogout }) {
   const [selectedYear] = useState(new Date().getFullYear())
 
   const today = new Date().toISOString().split('T')[0]
+  const ROW_HEIGHT = 220
 
   const getWeekDates = () => [...Array(15)].map((_, i) => {
     const d = new Date()
@@ -110,10 +108,22 @@ export default function HabitTracker({ user: propUser, onLogout }) {
     setNewHabit('')
   }
 
+  const deleteHabit = async (habitId) => {
+    if (!confirm('Delete this habit and all its logs?')) return
+    await supabase.from('habit_logs').delete().eq('habit_id', habitId)
+    await supabase.from('habits').delete().eq('id', habitId)
+    setHabits(habits.filter(h => h.id !== habitId))
+  }
+
   const addTask = async () => {
     if (!user) return
     const { data } = await supabase.from('tasks').insert({ user_id: user.id, title: `Task ${tasks.length + 1}`, date: today, done: false }).select()
     setTasks([...tasks, data[0]])
+  }
+
+  const deleteTask = async (taskId) => {
+    await supabase.from('tasks').delete().eq('id', taskId)
+    setTasks(tasks.filter(t => t.id !== taskId))
   }
 
   const updateTaskTitle = async (task, title) => {
@@ -195,7 +205,7 @@ export default function HabitTracker({ user: propUser, onLogout }) {
             </div>
             <div style={{ position: 'relative' }}>
               <button onClick={() => setShowUserMenu(!showUserMenu)}
-                style={{ width: 40, height: 40, borderRadius: '50%', background: GREEN, border: 'none', cursor: 'pointer', boxShadow: `0 2px 10px rgba(40,94,44,0.35)`, color: YELLOW, fontWeight: 700, fontSize: 15, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                style={{ width: 40, height: 40, borderRadius: '50%', background: GREEN, border: 'none', cursor: 'pointer', color: YELLOW, fontWeight: 700, fontSize: 15, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {avatarLetter}
               </button>
               {showUserMenu && (
@@ -248,8 +258,7 @@ export default function HabitTracker({ user: propUser, onLogout }) {
                   <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
                   <XAxis dataKey="date" tick={{ fontSize: 8, fill: '#94A3B8' }} axisLine={false} tickLine={false} interval={1} />
                   <YAxis tick={{ fontSize: 8, fill: '#94A3B8' }} axisLine={false} tickLine={false} tickFormatter={v => `${v}%`} domain={[0, 100]} ticks={[0, 25, 50, 75, 100]} />
-                  <Tooltip
-                    contentStyle={{ borderRadius: 10, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)', fontSize: 10 }}
+                  <Tooltip contentStyle={{ borderRadius: 10, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)', fontSize: 10 }}
                     formatter={v => [`${v}%`, 'Progress']}
                     labelFormatter={l => `${MONTHS[selectedMonth]} ${l}`}
                     labelStyle={{ fontWeight: 700, color: '#0F172A' }} />
@@ -265,7 +274,7 @@ export default function HabitTracker({ user: propUser, onLogout }) {
           <div style={{ height: ROW_HEIGHT, display: 'flex', flexDirection: 'column', gap: 10 }}>
             <div style={{ ...C, padding: 12, flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
               <p style={{ fontWeight: 700, fontSize: 11, color: '#0F172A', margin: '0 0 6px 0', alignSelf: 'flex-start' }}>Overall Progress</p>
-              <LiquidProgress percent={todayProgress} />
+              <CircularProgress percent={todayProgress} />
             </div>
             <div style={{ ...C, padding: 12, display: 'flex', alignItems: 'center', gap: 10 }}>
               <div style={{ width: 34, height: 34, borderRadius: '50%', background: GREEN, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -286,7 +295,7 @@ export default function HabitTracker({ user: propUser, onLogout }) {
               <AnimatePresence>
                 {tasks.map((task, i) => (
                   <motion.div key={task.id} initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                    style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                    style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
                     <button onClick={() => toggleTask(task)}
                       style={{ width: 18, height: 18, borderRadius: 4, border: `2px solid ${task.done ? GREEN : '#CBD5E1'}`, background: task.done ? GREEN : 'transparent', cursor: 'pointer', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       {task.done && <span style={{ color: YELLOW, fontSize: 8, fontWeight: 700 }}>✓</span>}
@@ -294,14 +303,16 @@ export default function HabitTracker({ user: propUser, onLogout }) {
                     <input value={task.title} onChange={e => updateTaskTitle(task, e.target.value)}
                       placeholder={`Task ${i + 1}`}
                       style={{ flex: 1, outline: 'none', background: 'transparent', border: 'none', fontSize: 11, color: task.done ? '#94A3B8' : '#0F172A', textDecoration: task.done ? 'line-through' : 'none' }} />
+                    <button onClick={() => deleteTask(task.id)}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 12, opacity: 0.4, flexShrink: 0, padding: 0 }}>🗑</button>
                   </motion.div>
                 ))}
               </AnimatePresence>
             </div>
             <div style={{ flexShrink: 0, marginTop: 10 }}>
               <button onClick={addTask}
-                style={{ width: '100%', height: 52, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 10, border: `2px dashed ${GREEN}`, background: 'transparent', cursor: 'pointer' }}>
-                <span style={{ fontSize: 24, color: GREEN }}>+</span>
+                style={{ width: '100%', height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 10, border: `2px dashed ${GREEN}`, background: 'transparent', cursor: 'pointer' }}>
+                <span style={{ fontSize: 22, color: GREEN }}>+</span>
               </button>
               <p style={{ fontSize: 9, color: '#94A3B8', textAlign: 'center', marginTop: 4, marginBottom: 0 }}>Today only · removed tomorrow</p>
             </div>
@@ -319,7 +330,7 @@ export default function HabitTracker({ user: propUser, onLogout }) {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 4, paddingBottom: 8, borderBottom: '1px solid #F1F5F9' }}>
-            <div style={{ width: 150, fontSize: 11, fontWeight: 600, color: '#94A3B8' }}>Habit</div>
+            <div style={{ width: 170, fontSize: 11, fontWeight: 600, color: '#94A3B8' }}>Habit</div>
             <div style={{ display: 'flex', gap: 4, flex: 1 }}>
               {weekDates.map((d, i) => (
                 <div key={i} style={{ flex: 1, textAlign: 'center' }}>
@@ -327,7 +338,7 @@ export default function HabitTracker({ user: propUser, onLogout }) {
                 </div>
               ))}
             </div>
-            <div style={{ width: 80, fontSize: 11, fontWeight: 600, color: '#94A3B8', textAlign: 'right' }}>Progress</div>
+            <div style={{ width: 90, fontSize: 11, fontWeight: 600, color: '#94A3B8', textAlign: 'right' }}>Progress</div>
           </div>
 
           <AnimatePresence>
@@ -337,9 +348,12 @@ export default function HabitTracker({ user: propUser, onLogout }) {
                 <motion.div key={habit.id}
                   initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
                   style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '10px 0', borderBottom: '1px solid #F8FAFC' }}>
-                  <div style={{ width: 150, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div style={{ width: 170, display: 'flex', alignItems: 'center', gap: 6 }}>
                     <span style={{ fontSize: 14 }}>{HABIT_ICONS[hi % HABIT_ICONS.length]}</span>
-                    <span style={{ fontSize: 12, fontWeight: 600, color: '#0F172A' }}>{habit.name}</span>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: '#0F172A', flex: 1 }}>{habit.name}</span>
+                    <button onClick={() => deleteHabit(habit.id)}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 12, opacity: 0.35, padding: 0, flexShrink: 0 }}
+                      title="Delete habit">🗑</button>
                   </div>
                   <div style={{ display: 'flex', gap: 4, flex: 1 }}>
                     {weekDates.map((day) => (
@@ -351,7 +365,7 @@ export default function HabitTracker({ user: propUser, onLogout }) {
                       </div>
                     ))}
                   </div>
-                  <div style={{ width: 80, display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <div style={{ width: 90, display: 'flex', alignItems: 'center', gap: 6 }}>
                     <div style={{ flex: 1, height: 3, background: GREEN_LIGHT, borderRadius: 99 }}>
                       <div style={{ height: 3, width: `${prog}%`, background: GREEN, borderRadius: 99, transition: 'width 0.5s' }} />
                     </div>
@@ -364,15 +378,15 @@ export default function HabitTracker({ user: propUser, onLogout }) {
 
           {habits.length > 0 && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '8px 0' }}>
-              <div style={{ width: 150 }} />
+              <div style={{ width: 170 }} />
               <div style={{ display: 'flex', gap: 4, flex: 1 }}>
                 {weekDates.map((_, i) => (
                   <div key={i} style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-                    <div style={{ width: 14, height: 14, borderRadius: '50%', border: `1px solid ${GREEN}` }} />
+                    <div style={{ width: 14, height: 14, borderRadius: '50%', border: `1px solid ${GREEN}`, opacity: 0.3 }} />
                   </div>
                 ))}
               </div>
-              <div style={{ width: 80 }} />
+              <div style={{ width: 90 }} />
             </div>
           )}
 
@@ -396,4 +410,4 @@ export default function HabitTracker({ user: propUser, onLogout }) {
       </div>
     </div>
   )
-}   
+}

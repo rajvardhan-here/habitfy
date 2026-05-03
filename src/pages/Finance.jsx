@@ -5,7 +5,6 @@ import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContai
 const GREEN = '#285E2C'
 const GREEN_LIGHT = '#E8F5E9'
 const YELLOW = '#FFE67C'
-const YELLOW_DARK = '#C9A800'
 
 export default function Finance() {
   const [budget, setBudget] = useState(null)
@@ -57,6 +56,12 @@ export default function Finance() {
     setForm({ description: '', category: 'Food', amount: '' })
   }
 
+  const deleteExpense = async (id) => {
+    if (!confirm('Delete this expense?')) return
+    await supabase.from('expenses').delete().eq('id', id)
+    setExpenses(expenses.filter(e => e.id !== id))
+  }
+
   const totalSpent = expenses.filter(e => e.date?.startsWith(currentMonth)).reduce((sum, e) => sum + e.amount, 0)
   const remaining = budget ? budget.amount - totalSpent : 0
 
@@ -73,11 +78,11 @@ export default function Finance() {
   })).filter(c => c.amount > 0)
 
   const C = { background: 'white', borderRadius: 20, boxShadow: '0 2px 20px rgba(40,94,44,0.08)' }
-  const inputStyle = { background: YELLOW, border: `1px solid rgba(40,94,44,0.15)`, color: GREEN, borderRadius: 12, padding: '8px 12px', fontSize: 13, outline: 'none', width: '100%' }
+  const inputStyle = { background: YELLOW, border: `1px solid rgba(40,94,44,0.15)`, color: GREEN, borderRadius: 12, padding: '8px 12px', fontSize: 13, outline: 'none', width: '100%', boxSizing: 'border-box' }
 
   return (
     <div style={{ padding: 24, overflowY: 'auto', minHeight: '100vh', background: YELLOW, fontFamily: "'Inter', sans-serif" }}>
-      <h1 style={{ fontSize: 24, fontWeight: 900, color: GREEN, marginBottom: 4, margin: 0 }}>Finance Tracker 💰</h1>
+      <h1 style={{ fontSize: 24, fontWeight: 900, color: GREEN, margin: '0 0 4px 0' }}>Finance Tracker 💰</h1>
       <p style={{ fontSize: 13, color: '#4a7c4e', marginBottom: 24, marginTop: 4 }}>
         {new Date().toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })}
       </p>
@@ -99,7 +104,7 @@ export default function Finance() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
         {/* Area Chart */}
         <div style={{ ...C, padding: 16 }}>
-          <h3 style={{ fontSize: 13, fontWeight: 700, color: GREEN, marginBottom: 12, margin: '0 0 12px 0' }}>Last 7 Days Spending</h3>
+          <h3 style={{ fontSize: 13, fontWeight: 700, color: GREEN, margin: '0 0 12px 0' }}>Last 7 Days Spending</h3>
           <ResponsiveContainer width="100%" height={160}>
             <AreaChart data={last7}>
               <defs>
@@ -119,9 +124,9 @@ export default function Finance() {
           </ResponsiveContainer>
         </div>
 
-        {/* Category Bar Chart */}
+        {/* Category Chart */}
         <div style={{ ...C, padding: 16 }}>
-          <h3 style={{ fontSize: 13, fontWeight: 700, color: GREEN, marginBottom: 12, margin: '0 0 12px 0' }}>By Category</h3>
+          <h3 style={{ fontSize: 13, fontWeight: 700, color: GREEN, margin: '0 0 12px 0' }}>By Category</h3>
           <ResponsiveContainer width="100%" height={160}>
             <BarChart data={categoryData} layout="vertical">
               <XAxis type="number" tick={{ fontSize: 11, fill: '#4a7c4e' }} axisLine={false} tickLine={false} />
@@ -140,8 +145,7 @@ export default function Finance() {
           <div style={{ display: 'flex', gap: 8 }}>
             <input value={newBudget} onChange={e => setNewBudget(e.target.value)}
               placeholder={budget ? `Current: ₹${budget.amount}` : 'Enter amount...'}
-              type="number"
-              style={{ ...inputStyle, flex: 1 }} />
+              type="number" style={{ ...inputStyle, flex: 1 }} />
             <button onClick={saveBudget}
               style={{ padding: '8px 16px', borderRadius: 12, fontSize: 13, fontWeight: 700, color: YELLOW, background: GREEN, border: 'none', cursor: 'pointer' }}>
               Save
@@ -152,7 +156,7 @@ export default function Finance() {
               <div style={{ width: '100%', borderRadius: 99, height: 6, background: GREEN_LIGHT }}>
                 <div style={{ height: 6, borderRadius: 99, transition: 'width 0.5s', width: `${Math.min((totalSpent / budget.amount) * 100, 100)}%`, background: totalSpent > budget.amount ? '#e74c3c' : GREEN }} />
               </div>
-              <p style={{ fontSize: 11, color: '#4a7c4e', marginTop: 4, margin: '4px 0 0 0' }}>{Math.round((totalSpent / budget.amount) * 100)}% used</p>
+              <p style={{ fontSize: 11, color: '#4a7c4e', margin: '4px 0 0 0' }}>{Math.round((totalSpent / budget.amount) * 100)}% used</p>
             </div>
           )}
         </div>
@@ -162,16 +166,14 @@ export default function Finance() {
           <h3 style={{ fontSize: 13, fontWeight: 700, color: GREEN, margin: '0 0 12px 0' }}>Add Expense</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <input value={form.description} onChange={e => setForm({ ...form, description: e.target.value })}
-              placeholder="What did you spend on?"
-              style={inputStyle} />
-            <div style={{ display: 'flex', gap: 40 }}>
+              placeholder="What did you spend on?" style={inputStyle} />
+            <div style={{ display: 'flex', gap: 8 }}>
               <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}
                 style={{ ...inputStyle, flex: 1 }}>
                 {categories.map(c => <option key={c}>{c}</option>)}
               </select>
               <input value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })}
-                placeholder="₹" type="number"
-                style={{ ...inputStyle, width: 320 }} />
+                placeholder="₹" type="number" style={{ ...inputStyle, width: 80 }} />
             </div>
             <button onClick={addExpense}
               style={{ borderRadius: 12, padding: '10px', fontSize: 13, fontWeight: 700, color: YELLOW, background: GREEN, border: 'none', cursor: 'pointer' }}>
@@ -184,13 +186,18 @@ export default function Finance() {
       {/* Recent Expenses */}
       <div style={{ ...C, padding: 16 }}>
         <h3 style={{ fontSize: 13, fontWeight: 700, color: GREEN, margin: '0 0 12px 0' }}>Recent Expenses</h3>
-        {expenses.slice(0, 10).map((e) => (
+        {expenses.slice(0, 15).map((e) => (
           <div key={e.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', borderBottom: `1px solid ${GREEN_LIGHT}` }}>
             <div>
               <p style={{ fontSize: 13, fontWeight: 600, color: GREEN, margin: 0 }}>{e.description}</p>
               <p style={{ fontSize: 11, color: '#4a7c4e', margin: 0 }}>{e.category} · {e.date}</p>
             </div>
-            <p style={{ fontSize: 13, fontWeight: 700, color: GREEN, margin: 0 }}>₹{e.amount}</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <p style={{ fontSize: 13, fontWeight: 700, color: GREEN, margin: 0 }}>₹{e.amount}</p>
+              <button onClick={() => deleteExpense(e.id)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 14, opacity: 0.4, padding: 0 }}
+                title="Delete expense">🗑</button>
+            </div>
           </div>
         ))}
         {expenses.length === 0 && (
@@ -199,4 +206,4 @@ export default function Finance() {
       </div>
     </div>
   )
-} 
+}
