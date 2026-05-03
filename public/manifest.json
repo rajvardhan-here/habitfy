@@ -1,0 +1,21 @@
+{
+  "name": "Habitfy",
+  "short_name": "Habitfy",
+  "description": "Track habits, build streaks, live better",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFE67C",
+  "theme_color": "#285E2C",
+  "icons": [
+    {
+      "src": "/hero.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/hero.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

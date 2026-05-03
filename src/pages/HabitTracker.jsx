@@ -321,7 +321,7 @@
           </div>
 
           {/* HABIT TABLE */}
-          <div style={{ { ...C, padding: 16, overflowX: 'auto' }}}>
+          <div style={{ ...C, padding: 16, overflowX: 'auto' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
               <h3 style={{ fontWeight: 700, fontSize: 15, color: '#0F172A', margin: 0 }}>Habit Tracker</h3>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
