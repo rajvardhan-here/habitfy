@@ -7,10 +7,13 @@ export default function Login() {
 
 const handleGoogleLogin = async () => {
   setLoading(true)
-  await supabase.auth.signInWithOAuth({
+  const { error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: 'https://habitfy-teal.vercel.app' }
+    options: { 
+      redirectTo: 'https://habitfy-teal.vercel.app'
+    }
   })
+  if (error) console.error('Login error:', error)
   setLoading(false)
 }
 
