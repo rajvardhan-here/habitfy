@@ -13,21 +13,25 @@ function App() {
       setSession(session)
       setLoading(false)
     })
-    supabase.auth.onAuthStateChange((_event, session) => {
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
+      setLoading(false)
     })
+
+    return () => subscription.unsubscribe()
   }, [])
 
   if (loading) return (
-    <div className="min-h-screen bg-sky-50 flex items-center justify-center">
-      <div className="text-sky-500 text-xl font-semibold">Loading...</div>
+    <div style={{ minHeight: '100vh', background: '#FFE67C', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ color: '#285E2C', fontSize: 20, fontWeight: 700 }}>Loading...</div>
     </div>
   )
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={!session ? <Login /> : <Navigate to="/" />} />
+        <Route path="/login" element={!session ? <Login /> : <Navigate to="/habits" />} />
         <Route path="/*" element={session ? <Dashboard /> : <Navigate to="/login" />} />
       </Routes>
     </BrowserRouter>
