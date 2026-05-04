@@ -1,3 +1,11 @@
+import { useState, useEffect } from 'react'
+import { supabase } from '../lib/supabase'
+import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
+import HabitTracker from './HabitTracker'
+import Finance from './Finance'
+import Journal from './Journal'
+
 export default function Dashboard() {
   const [user, setUser] = useState(null)
   const [expanded, setExpanded] = useState(false)
