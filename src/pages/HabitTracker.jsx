@@ -10,11 +10,9 @@ const GREEN = '#285E2C'
 const GREEN_LIGHT = '#E8F5E9'
 const YELLOW = '#FFE67C'
 
-// CHANGE 7: Bigger bowl with cap, overflow animation at 95%
 function WaterBowl({ percent }) {
   const isOverflow = percent >= 95
   const waveY = 100 - percent
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '12px 0' }}>
       <div style={{ position: 'relative', width: 110, height: 110 }}>
@@ -28,56 +26,34 @@ function WaterBowl({ percent }) {
               <stop offset="100%" stopColor={GREEN} stopOpacity={1} />
             </linearGradient>
           </defs>
-
-          {/* Bowl body */}
           <ellipse cx="55" cy="58" rx="46" ry="46" fill={GREEN_LIGHT} stroke={GREEN} strokeWidth="2.5" />
-
-          {/* Water fill */}
           <g clipPath="url(#bowlClip)">
             <rect x="0" y={12 + waveY * 0.88} width="110" height="110" fill="url(#waterGrad)" opacity="0.85" />
             <motion.path
               d={`M-10,${12 + waveY * 0.88} C15,${12 + waveY * 0.88 - 7} 40,${12 + waveY * 0.88 + 7} 65,${12 + waveY * 0.88} C90,${12 + waveY * 0.88 - 7} 110,${12 + waveY * 0.88 + 5} 130,${12 + waveY * 0.88} L130,110 L-10,110 Z`}
-              fill={GREEN} opacity={0.5}
-              animate={{ x: [0, -50, 0] }}
-              transition={{ duration: 2, repeat: Infinity, ease: 'linear' }} />
+              fill={GREEN} opacity={0.5} animate={{ x: [0, -50, 0] }} transition={{ duration: 2, repeat: Infinity, ease: 'linear' }} />
             <motion.path
               d={`M-10,${12 + waveY * 0.88 + 4} C20,${12 + waveY * 0.88 - 4} 45,${12 + waveY * 0.88 + 9} 70,${12 + waveY * 0.88 + 3} C95,${12 + waveY * 0.88 - 5} 115,${12 + waveY * 0.88 + 7} 130,${12 + waveY * 0.88} L130,110 L-10,110 Z`}
-              fill="#4CAF50" opacity={0.3}
-              animate={{ x: [0, 50, 0] }}
-              transition={{ duration: 2.5, repeat: Infinity, ease: 'linear' }} />
+              fill="#4CAF50" opacity={0.3} animate={{ x: [0, 50, 0] }} transition={{ duration: 2.5, repeat: Infinity, ease: 'linear' }} />
           </g>
-
-          {/* Bowl border overlay */}
           <ellipse cx="55" cy="58" rx="46" ry="46" fill="none" stroke={GREEN} strokeWidth="2.5" />
-
-          {/* Open cap / rim at top - like a mug opening */}
           <ellipse cx="55" cy="13" rx="46" ry="9" fill={GREEN_LIGHT} stroke={GREEN} strokeWidth="2" />
           <ellipse cx="55" cy="13" rx="38" ry="6" fill="white" stroke={GREEN} strokeWidth="1.5" opacity="0.8" />
-
-          {/* Percentage text */}
           <text x="55" y="60" textAnchor="middle" style={{ fontSize: 17, fontWeight: 900, fill: percent > 50 ? 'white' : GREEN }}>{percent}%</text>
           <text x="55" y="74" textAnchor="middle" style={{ fontSize: 8, fill: percent > 50 ? 'rgba(255,255,255,0.8)' : '#94A3B8' }}>this month</text>
         </svg>
-
-        {/* Overflow drops when >= 95% */}
         {isOverflow && (
           <>
             <motion.div style={{ position: 'absolute', top: 2, left: 32, width: 7, height: 14, borderRadius: '50%', background: GREEN, opacity: 0.8 }}
-              animate={{ y: [0, -8, 0], scaleY: [1, 1.3, 1] }}
-              transition={{ duration: 1.0, repeat: Infinity }} />
+              animate={{ y: [0, -8, 0], scaleY: [1, 1.3, 1] }} transition={{ duration: 1.0, repeat: Infinity }} />
             <motion.div style={{ position: 'absolute', top: 0, left: 52, width: 6, height: 12, borderRadius: '50%', background: '#4CAF50', opacity: 0.7 }}
-              animate={{ y: [0, -10, 0], scaleY: [1, 1.4, 1] }}
-              transition={{ duration: 1.3, repeat: Infinity, delay: 0.4 }} />
+              animate={{ y: [0, -10, 0], scaleY: [1, 1.4, 1] }} transition={{ duration: 1.3, repeat: Infinity, delay: 0.4 }} />
             <motion.div style={{ position: 'absolute', top: 3, left: 70, width: 5, height: 10, borderRadius: '50%', background: GREEN, opacity: 0.6 }}
-              animate={{ y: [0, -7, 0], scaleY: [1, 1.2, 1] }}
-              transition={{ duration: 0.9, repeat: Infinity, delay: 0.7 }} />
-            {/* Drips falling down the side */}
+              animate={{ y: [0, -7, 0], scaleY: [1, 1.2, 1] }} transition={{ duration: 0.9, repeat: Infinity, delay: 0.7 }} />
             <motion.div style={{ position: 'absolute', top: 8, left: 8, width: 5, height: 5, borderRadius: '50%', background: GREEN }}
-              animate={{ y: [0, 20, 0], opacity: [0.8, 0, 0.8] }}
-              transition={{ duration: 1.4, repeat: Infinity }} />
+              animate={{ y: [0, 20, 0], opacity: [0.8, 0, 0.8] }} transition={{ duration: 1.4, repeat: Infinity }} />
             <motion.div style={{ position: 'absolute', top: 8, right: 8, width: 4, height: 4, borderRadius: '50%', background: GREEN }}
-              animate={{ y: [0, 18, 0], opacity: [0.6, 0, 0.6] }}
-              transition={{ duration: 1.6, repeat: Infinity, delay: 0.6 }} />
+              animate={{ y: [0, 18, 0], opacity: [0.6, 0, 0.6] }} transition={{ duration: 1.6, repeat: Infinity, delay: 0.6 }} />
           </>
         )}
       </div>
@@ -86,16 +62,14 @@ function WaterBowl({ percent }) {
 }
 
 function MiniCircle({ percent }) {
-  const r = 9
-  const circ = 2 * Math.PI * r
+  const r = 9, circ = 2 * Math.PI * r
   const offset = circ - (percent / 100) * circ
   return (
     <svg width={22} height={22} style={{ flexShrink: 0 }}>
       <circle cx={11} cy={11} r={r} fill="none" stroke={GREEN_LIGHT} strokeWidth={3} />
       <circle cx={11} cy={11} r={r} fill="none" stroke={GREEN} strokeWidth={3}
         strokeDasharray={circ} strokeDashoffset={offset} strokeLinecap="round"
-        transform="rotate(-90 11 11)"
-        style={{ transition: 'stroke-dashoffset 0.8s ease' }} />
+        transform="rotate(-90 11 11)" style={{ transition: 'stroke-dashoffset 0.8s ease' }} />
     </svg>
   )
 }
@@ -113,10 +87,16 @@ export default function HabitTracker({ user: propUser, onLogout }) {
   const [showMonthPicker, setShowMonthPicker] = useState(false)
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth())
   const [selectedYear] = useState(new Date().getFullYear())
+  // CHANGE 4: reactive viewport for mobile fix
+  const [vw, setVw] = useState(window.innerWidth)
+  useEffect(() => {
+    const onResize = () => setVw(window.innerWidth)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
 
-  const isMobile = window.innerWidth < 768
+  const isMobile = vw < 768
   const today = new Date().toISOString().split('T')[0]
-  // CHANGE 5: Current date display
   const nowDate = new Date()
   const todayLabel = `${DAYS[nowDate.getDay()]}, ${nowDate.getDate()} ${MONTHS[nowDate.getMonth()]}`
 
@@ -127,10 +107,7 @@ export default function HabitTracker({ user: propUser, onLogout }) {
     return Array.from({ length: end - start + 1 }, (_, i) => {
       const day = start + i
       const d = new Date(selectedYear, selectedMonth, day)
-      return {
-        label: d.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }),
-        date: d.toISOString().split('T')[0]
-      }
+      return { label: d.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }), date: d.toISOString().split('T')[0] }
     })
   }
 
@@ -143,7 +120,6 @@ export default function HabitTracker({ user: propUser, onLogout }) {
       return { date: `${i + 1}`, fullDate: d.toISOString().split('T')[0] }
     })
   }
-
   const monthDays = getDaysInMonth(selectedMonth, selectedYear)
 
   useEffect(() => {
@@ -158,13 +134,10 @@ export default function HabitTracker({ user: propUser, onLogout }) {
     const { data } = await supabase.from('habits').select('*, habit_logs(*)').eq('user_id', uid)
     setHabits(data || [])
     if (data && data.length > 0) {
-      let s = 0
-      const d = new Date()
+      let s = 0; const d = new Date()
       for (let i = 0; i < 365; i++) {
         const ds = d.toISOString().split('T')[0]
-        if (data.every(h => h.habit_logs && h.habit_logs.some(l => l.date === ds))) {
-          s++; d.setDate(d.getDate() - 1)
-        } else break
+        if (data.every(h => h.habit_logs && h.habit_logs.some(l => l.date === ds))) { s++; d.setDate(d.getDate() - 1) } else break
       }
       setStreak(s)
       const allDates = new Set()
@@ -181,8 +154,7 @@ export default function HabitTracker({ user: propUser, onLogout }) {
   const addHabit = async () => {
     if (!newHabit.trim() || !user) return
     const { data } = await supabase.from('habits').insert({ user_id: user.id, name: newHabit, color: GREEN }).select()
-    setHabits([...habits, { ...data[0], habit_logs: [] }])
-    setNewHabit('')
+    setHabits([...habits, { ...data[0], habit_logs: [] }]); setNewHabit('')
   }
 
   const deleteHabit = async (habitId) => {
@@ -192,7 +164,6 @@ export default function HabitTracker({ user: propUser, onLogout }) {
     setHabits(habits.filter(h => h.id !== habitId))
   }
 
-  // CHANGE 3: addTask with empty title so placeholder shows
   const addTask = async () => {
     if (!user) return
     const { data } = await supabase.from('tasks').insert({ user_id: user.id, title: '', date: today, done: false }).select()
@@ -209,9 +180,8 @@ export default function HabitTracker({ user: propUser, onLogout }) {
     setTasks(tasks.map(t => t.id === task.id ? { ...t, title } : t))
   }
 
-  // CHANGE 6: Block toggling future dates
   const toggleHabit = async (habitId, date) => {
-    if (date > today) return // Cannot check future dates
+    if (date > today) return
     const habit = habits.find(h => h.id === habitId)
     const log = habit.habit_logs && habit.habit_logs.find(l => l.date === date)
     if (log) await supabase.from('habit_logs').delete().eq('id', log.id)
@@ -223,9 +193,7 @@ export default function HabitTracker({ user: propUser, onLogout }) {
     await supabase.from('tasks').update({ done: !task.done }).eq('id', task.id)
     const updated = tasks.map(t => t.id === task.id ? { ...t, done: !t.done } : t)
     setTasks(updated)
-    if (updated.every(t => t.done) && updated.length > 0) {
-      setCelebrate(true); setTimeout(() => setCelebrate(false), 3000)
-    }
+    if (updated.every(t => t.done) && updated.length > 0) { setCelebrate(true); setTimeout(() => setCelebrate(false), 3000) }
   }
 
   const isDone = (habit, date) => habit.habit_logs && habit.habit_logs.some(l => l.date === date)
@@ -233,14 +201,11 @@ export default function HabitTracker({ user: propUser, onLogout }) {
 
   const getHabitMonthProgress = (habit) => {
     if (!habit.habit_logs || habit.habit_logs.length === 0) return 0
-    const done = monthDays.filter(d => isDone(habit, d.fullDate)).length
-    return Math.round((done / monthDays.length) * 100)
+    return Math.round((monthDays.filter(d => isDone(habit, d.fullDate)).length / monthDays.length) * 100)
   }
-
   const getHabitHalfProgress = (habit) => {
     if (!habit.habit_logs || habit.habit_logs.length === 0) return 0
-    const done = weekDates.filter(d => isDone(habit, d.date)).length
-    return Math.round((done / weekDates.length) * 100)
+    return Math.round((weekDates.filter(d => isDone(habit, d.date)).length / weekDates.length) * 100)
   }
 
   const monthProgress = habits.length > 0
@@ -250,30 +215,24 @@ export default function HabitTracker({ user: propUser, onLogout }) {
       }, 0) / monthDays.length)
     : 0
 
-  // CHANGE 2: interval=1 means every date shown, we use interval prop on XAxis = 1 (every 2 days)
   const chartData = monthDays.map(day => ({
     date: day.date,
-    productivity: habits.length > 0
-      ? Math.round((habits.filter(h => isDone(h, day.fullDate)).length / habits.length) * 100)
-      : 0
+    productivity: habits.length > 0 ? Math.round((habits.filter(h => isDone(h, day.fullDate)).length / habits.length) * 100) : 0
   }))
 
-  const firstName = user && user.user_metadata && user.user_metadata.name
-    ? user.user_metadata.name.split(' ')[0] : 'there'
+  const firstName = user && user.user_metadata && user.user_metadata.name ? user.user_metadata.name.split(' ')[0] : 'there'
   const avatarLetter = firstName[0].toUpperCase()
   const C = { background: 'white', borderRadius: 20, boxShadow: '0 2px 20px rgba(40,94,44,0.10)' }
   const daysInSelectedMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate()
 
   return (
     <div style={{ minHeight: '100vh', background: YELLOW, fontFamily: 'Inter, sans-serif', overflowY: 'auto' }}>
-
       {celebrate && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 50, pointerEvents: 'none' }}>
           {[...Array(20)].map((_, i) => (
             <motion.div key={i} style={{ position: 'absolute', fontSize: 24 }}
               initial={{ y: '100vh', x: `${Math.random() * 100}vw`, opacity: 1 }}
-              animate={{ y: '-10vh', opacity: 0 }}
-              transition={{ duration: 2, delay: Math.random() }}>
+              animate={{ y: '-10vh', opacity: 0 }} transition={{ duration: 2, delay: Math.random() }}>
               {['🎉', '✨', '🌟', '🎊', '💫'][Math.floor(Math.random() * 5)]}
             </motion.div>
           ))}
@@ -283,7 +242,7 @@ export default function HabitTracker({ user: propUser, onLogout }) {
       <div style={{ padding: isMobile ? 12 : 20 }}>
 
         {/* HEADER */}
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10, marginBottom: 20 }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10, marginBottom: 10 }}>
           <div>
             <h1 style={{ fontSize: isMobile ? 22 : 30, fontWeight: 900, color: '#0F172A', lineHeight: 1.2, margin: 0 }}>
               Hello <span style={{ color: GREEN }}>{firstName} ji,</span>
@@ -293,9 +252,7 @@ export default function HabitTracker({ user: propUser, onLogout }) {
             </p>
             <div style={{ height: 2, width: isMobile ? 180 : 300, background: `linear-gradient(90deg, ${GREEN}, transparent)`, marginTop: 5, borderRadius: 2 }} />
           </div>
-
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            {/* CHANGE 5: Show current date instead of date range */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 20, background: 'white', boxShadow: '0 2px 10px rgba(0,0,0,0.08)' }}>
               <span style={{ fontSize: 12 }}>📅</span>
               <span style={{ fontWeight: 600, color: '#334155', fontSize: 11 }}>{todayLabel}</span>
@@ -316,11 +273,23 @@ export default function HabitTracker({ user: propUser, onLogout }) {
           </div>
         </div>
 
-        {/* ROW 1 */}
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 160px 1fr', gap: 14, marginBottom: 16 }}>
+        {/* CHANGE 2: Streak pill — below header, left-aligned, wide */}
+        <div style={{ marginBottom: 14 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 12, padding: '6px 16px', borderRadius: 20, background: 'white', boxShadow: '0 2px 10px rgba(40,94,44,0.10)' }}>
+            <span style={{ fontSize: 16 }}>🔥</span>
+            <span style={{ fontSize: 17, fontWeight: 900, color: GREEN }}>{streak}</span>
+            <span style={{ fontSize: 11, fontWeight: 600, color: '#4a7c4e' }}>day streak</span>
+            <div style={{ width: 1, height: 16, background: '#E2E8F0' }} />
+            <span style={{ fontSize: 14, fontWeight: 800, color: GREEN }}>{totalDays}</span>
+            <span style={{ fontSize: 11, fontWeight: 600, color: '#4a7c4e' }}>total active days</span>
+          </div>
+        </div>
+
+        {/* CHANGE 1: graph gets most width (1fr), bowl fixed 160px, task fixed 220px */}
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 160px 220px', gap: 14, marginBottom: 16 }}>
 
           {/* Chart */}
-          <div style={{ ...C, padding: 13, height: isMobile ? 200 : 220, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ ...C, padding: 14, height: isMobile ? 200 : 220, display: 'flex', flexDirection: 'column' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6, flexShrink: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <h3 style={{ fontWeight: 700, fontSize: 13, color: '#0F172A', margin: 0 }}>Progress</h3>
@@ -344,8 +313,7 @@ export default function HabitTracker({ user: propUser, onLogout }) {
               </div>
             </div>
             <div style={{ flex: 1, minHeight: 0 }}>
-              <ResponsiveContainer width="100%" height="110%">
-                {/* CHANGE 2: interval=1 shows every 2nd tick (0-indexed), so gap of 2 days */}
+              <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chartData} margin={{ top: 5, right: 5, left: -25, bottom: 0 }}>
                   <defs>
                     <linearGradient id="greenGrad" x1="0" y1="0" x2="0" y2="1">
@@ -367,7 +335,7 @@ export default function HabitTracker({ user: propUser, onLogout }) {
             </div>
           </div>
 
-          {/* CHANGE 7: Water Bowl — bigger, with cap, overflow */}
+          {/* Water Bowl */}
           <div style={{ ...C, padding: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: isMobile ? 'auto' : 220 }}>
             <p style={{ fontWeight: 700, fontSize: 11, color: '#0F172A', margin: '0 0 2px 0', alignSelf: 'flex-start' }}>Overall</p>
             <p style={{ fontSize: 9, color: '#94A3B8', margin: '0 0 4px 0', alignSelf: 'flex-start' }}>{MONTHS[selectedMonth]} {selectedYear}</p>
@@ -375,55 +343,36 @@ export default function HabitTracker({ user: propUser, onLogout }) {
             <p style={{ fontSize: 9, color: '#4a7c4e', margin: '2px 0 0 0', textAlign: 'center', fontWeight: 600 }}>Total: {totalDays} days</p>
           </div>
 
-          {/* RIGHT COLUMN: Extra Task of the Day + Streak (CHANGES 3 & 4) */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, height: isMobile ? 'auto' : 220 }}>
-
-            {/* CHANGE 3: "Extra Task of the Day" with Enter placeholder */}
-            <div style={{ ...C, padding: 14, flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
-              <p style={{ fontWeight: 700, fontSize: 12, color: '#0F172A', margin: '0 0 8px 0', flexShrink: 0 }}>⚡ Extra Task of the Day</p>
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6, overflowY: 'auto' }}>
-                <AnimatePresence>
-                  {tasks.map((task) => (
-                    <motion.div key={task.id} initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                      style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <button onClick={() => toggleTask(task)}
-                        style={{ width: 18, height: 18, borderRadius: 4, border: `2px solid ${task.done ? GREEN : '#CBD5E1'}`, background: task.done ? GREEN : 'transparent', cursor: 'pointer', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        {task.done && <span style={{ color: YELLOW, fontSize: 8, fontWeight: 700 }}>✓</span>}
-                      </button>
-                      <input value={task.title} onChange={e => updateTaskTitle(task, e.target.value)}
-                        placeholder="Enter task..."
-                        style={{ flex: 1, outline: 'none', background: 'transparent', border: 'none', fontSize: 11, color: task.done ? '#94A3B8' : '#0F172A', textDecoration: task.done ? 'line-through' : 'none' }} />
-                      <button onClick={() => deleteTask(task.id)}
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: '#9CA3AF', flexShrink: 0, padding: 0 }}>🗑</button>
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </div>
-              <div style={{ flexShrink: 0, marginTop: 6 }}>
-                <button onClick={addTask}
-                  style={{ width: '100%', height: tasks.length === 0 ? 50 : 28, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 10, border: `2px dashed ${GREEN}`, background: 'transparent', cursor: 'pointer' }}>
-                  <span style={{ fontSize: 18, color: GREEN }}>+</span>
-                </button>
-                <p style={{ fontSize: 9, color: '#94A3B8', textAlign: 'center', marginTop: 3, marginBottom: 0 }}>Today only · removed tomorrow</p>
-              </div>
+          {/* Extra Task of the Day */}
+          <div style={{ ...C, padding: 14, height: isMobile ? 'auto' : 220, display: 'flex', flexDirection: 'column' }}>
+            <p style={{ fontWeight: 700, fontSize: 12, color: '#0F172A', margin: '0 0 8px 0', flexShrink: 0 }}>⚡ Extra Task of the Day</p>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6, overflowY: 'auto' }}>
+              <AnimatePresence>
+                {tasks.map((task) => (
+                  <motion.div key={task.id} initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                    style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <button onClick={() => toggleTask(task)}
+                      style={{ width: 18, height: 18, borderRadius: 4, border: `2px solid ${task.done ? GREEN : '#CBD5E1'}`, background: task.done ? GREEN : 'transparent', cursor: 'pointer', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      {task.done && <span style={{ color: YELLOW, fontSize: 8, fontWeight: 700 }}>✓</span>}
+                    </button>
+                    <input value={task.title} onChange={e => updateTaskTitle(task, e.target.value)}
+                      placeholder="Enter task..."
+                      style={{ flex: 1, outline: 'none', background: 'transparent', border: 'none', fontSize: 11, color: task.done ? '#94A3B8' : '#0F172A', textDecoration: task.done ? 'line-through' : 'none' }} />
+                    <button onClick={() => deleteTask(task.id)}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: '#9CA3AF', flexShrink: 0, padding: 0 }}>🗑</button>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </div>
-
-            {/* CHANGE 4: Streak — separate container */}
-            <div style={{ ...C, padding: '10px 14px', display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-              <div style={{ fontSize: 28 }}>🔥</div>
-              <div>
-                <p style={{ margin: 0, fontSize: 9, color: '#94A3B8', fontWeight: 600 }}>Current Streak</p>
-                <p style={{ margin: 0, fontSize: 22, fontWeight: 900, color: GREEN, lineHeight: 1.1 }}>{streak}<span style={{ fontSize: 12, fontWeight: 600, color: '#4a7c4e' }}> days</span></p>
-              </div>
-              <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
-                <p style={{ margin: 0, fontSize: 9, color: '#94A3B8', fontWeight: 600 }}>Total Active</p>
-                <p style={{ margin: 0, fontSize: 16, fontWeight: 800, color: GREEN }}>{totalDays}<span style={{ fontSize: 10, color: '#4a7c4e' }}> days</span></p>
-              </div>
+            <div style={{ flexShrink: 0, marginTop: 8 }}>
+              <button onClick={addTask}
+                style={{ width: '100%', height: tasks.length === 0 ? 90 : 36, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 10, border: `2px dashed ${GREEN}`, background: 'transparent', cursor: 'pointer' }}>
+                <span style={{ fontSize: 22, color: GREEN }}>+</span>
+              </button>
+              <p style={{ fontSize: 9, color: '#94A3B8', textAlign: 'center', marginTop: 4, marginBottom: 0 }}>Today only · removed tomorrow</p>
             </div>
           </div>
         </div>
-
-        {/* CHANGE 1: 15-Day Report section REMOVED */}
 
         {/* HABIT TABLE */}
         <div style={{ ...C, padding: isMobile ? 12 : 16, overflowX: 'auto' }}>
@@ -473,7 +422,6 @@ export default function HabitTracker({ user: propUser, onLogout }) {
                         const future = isFuture(day.date)
                         return (
                           <div key={day.date} style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-                            {/* CHANGE 6: Future dates shown as disabled */}
                             <button
                               onClick={() => !future && toggleHabit(habit.id, day.date)}
                               disabled={future}
