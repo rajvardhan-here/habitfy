@@ -5,17 +5,17 @@ import { motion } from 'framer-motion'
 export default function Login() {
   const [loading, setLoading] = useState(false)
 
-const handleGoogleLogin = async () => {
-  setLoading(true)
-  const { error } = await supabase.auth.signInWithOAuth({
-  provider: "google",
-  options: {
-    redirectTo: window.location.origin + "/finance"
+  const handleGoogleLogin = async () => {
+    setLoading(true)
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: window.location.origin + "/habits"   // CHANGE 1: was /finance, now /habits
+      }
+    })
+    if (error) console.error('Login error:', error)
+    setLoading(false)
   }
-});
-  if (error) console.error('Login error:', error)
-  setLoading(false)
-}
 
   const features = [
     { icon: '∞', label: 'Habits' },
@@ -40,8 +40,7 @@ const handleGoogleLogin = async () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 relative overflow-hidden font-sans"
       style={{ background: 'linear-gradient(180deg, #A7D1F7 0%, #C1E1FF 100%)' }}>
-      
-      {/* 1. Floating Background Emojis */}
+
       {floaters.map((f, i) => (
         <motion.div key={i}
           className="absolute text-2xl md:text-3xl select-none pointer-events-none opacity-80"
@@ -52,7 +51,6 @@ const handleGoogleLogin = async () => {
         </motion.div>
       ))}
 
-      {/* 2. Progress Card (Top Left) */}
       <motion.div
         className="absolute rounded-2xl p-3 pointer-events-none z-0"
         style={{ left: '3%', top: '20%', background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.5)', minWidth: 130 }}
@@ -60,13 +58,12 @@ const handleGoogleLogin = async () => {
         transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}>
         <p className="text-[10px] uppercase font-bold text-white mb-1">Daily Progress</p>
         <div className="w-full bg-white/30 h-1.5 rounded-full overflow-hidden">
-          <motion.div className="bg-white h-full" 
+          <motion.div className="bg-white h-full"
             initial={{ width: 0 }} animate={{ width: '72%' }} transition={{ duration: 1.5 }} />
         </div>
         <p className="text-[10px] mt-1 text-white/90">72% done</p>
       </motion.div>
 
-      {/* 3. Streak Card (Top Right) */}
       <motion.div
         className="absolute rounded-2xl p-3 pointer-events-none z-0"
         style={{ right: '5%', top: '18%', background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.5)' }}
@@ -77,7 +74,6 @@ const handleGoogleLogin = async () => {
         <p className="text-[9px] text-center text-white/80">streak!</p>
       </motion.div>
 
-      {/* 4. Graph Card (Bottom Left) */}
       <motion.div
         className="absolute rounded-2xl p-3 pointer-events-none z-0"
         style={{ left: '4%', bottom: '22%', background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.5)' }}
@@ -92,7 +88,6 @@ const handleGoogleLogin = async () => {
         </div>
       </motion.div>
 
-      {/* 5. Budget Card (Bottom Right) */}
       <motion.div
         className="absolute rounded-2xl p-3 pointer-events-none z-0"
         style={{ right: '4%', bottom: '24%', background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.5)', minWidth: 120 }}
@@ -103,23 +98,12 @@ const handleGoogleLogin = async () => {
         <p className="text-[9px] text-white/80">of ₹5,000</p>
       </motion.div>
 
-      {/* MAIN CENTER CARD */}
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        whileHover={{ 
-          y: -8, 
-          scale: 1.02,
-          transition: { type: "spring", stiffness: 400, damping: 10 } 
-        }}
+        whileHover={{ y: -8, scale: 1.02, transition: { type: "spring", stiffness: 400, damping: 10 } }}
         className="relative z-10 rounded-[35px] p-8 w-full max-w-[340px] text-center"
-        style={{
-          background: '#96AD94',
-          boxShadow: `
-            0 30px 60px -12px rgba(0, 0, 0, 0.4), 
-            0 18px 36px -18px rgba(0, 0, 0, 0.5)
-          `
-        }}>
+        style={{ background: '#96AD94', boxShadow: '0 30px 60px -12px rgba(0,0,0,0.4), 0 18px 36px -18px rgba(0,0,0,0.5)' }}>
 
         <motion.div whileHover={{ rotate: 15 }}
           className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 cursor-pointer"
@@ -130,7 +114,6 @@ const handleGoogleLogin = async () => {
         <h1 className="text-3xl font-bold mb-1 text-white">Habitfy</h1>
         <p className="text-xs mb-6 text-white/70">Track habits. Build streaks. Live better.</p>
 
-        {/* Features Box */}
         <div className="mb-6 p-4 rounded-2xl"
           style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.1)' }}>
           <p className="text-[9px] font-bold mb-4 tracking-widest text-white/60">FREE FOR STUDENTS</p>
@@ -146,14 +129,12 @@ const handleGoogleLogin = async () => {
           </div>
         </div>
 
-        {/* Google Button */}
         <motion.button
           whileHover={{ scale: 1.04, boxShadow: "0 10px 20px rgba(0,0,0,0.15)" }}
           whileTap={{ scale: 0.96 }}
           onClick={handleGoogleLogin}
           disabled={loading}
-          className="w-full flex items-center justify-center gap-3 rounded-xl py-3.5 bg-white"
-        >
+          className="w-full flex items-center justify-center gap-3 rounded-xl py-3.5 bg-white">
           <img src="https://www.google.com/favicon.ico" className="w-4 h-4" alt="G" />
           <span className="font-bold text-gray-800 text-sm">
             {loading ? 'Processing...' : 'Continue with Google'}
@@ -163,7 +144,6 @@ const handleGoogleLogin = async () => {
         <p className="text-[10px] mt-4 text-white/40">Free forever · No credit card needed</p>
       </motion.div>
 
-      {/* Footer Credit */}
       <motion.div whileHover={{ scale: 1.05 }} className="absolute bottom-6 opacity-50">
         <span className="text-[10px] font-bold text-gray-600">Made with 💙 by Rajvardhan</span>
       </motion.div>

@@ -87,8 +87,9 @@ export default function HabitTracker({ user: propUser, onLogout }) {
   const [showMonthPicker, setShowMonthPicker] = useState(false)
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth())
   const [selectedYear] = useState(new Date().getFullYear())
-  // CHANGE 4: reactive viewport for mobile fix
-  const [vw, setVw] = useState(window.innerWidth)
+  // CHANGE 2: reactive viewport so mobile works correctly
+  const [vw, setVw] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024)
+
   useEffect(() => {
     const onResize = () => setVw(window.innerWidth)
     window.addEventListener('resize', onResize)
@@ -153,31 +154,35 @@ export default function HabitTracker({ user: propUser, onLogout }) {
 
   const addHabit = async () => {
     if (!newHabit.trim() || !user) return
-    const { data } = await supabase.from('habits').insert({ user_id: user.id, name: newHabit, color: GREEN }).select()
-    setHabits([...habits, { ...data[0], habit_logs: [] }]); setNewHabit('')
+    const { data, error } = await supabase.from('habits').insert({ user_id: user.id, name: newHabit, color: GREEN }).select()
+    if (error) { console.error('addHabit error', error); return }
+    setHabits(prev => [...prev, { ...data[0], habit_logs: [] }])
+    setNewHabit('')
   }
 
   const deleteHabit = async (habitId) => {
     if (!confirm('Delete this habit and all its logs?')) return
     await supabase.from('habit_logs').delete().eq('habit_id', habitId)
     await supabase.from('habits').delete().eq('id', habitId)
-    setHabits(habits.filter(h => h.id !== habitId))
+    setHabits(prev => prev.filter(h => h.id !== habitId))
   }
 
+  // CHANGE 2 FIX: addTask now works on mobile — uses functional state update and catches error
   const addTask = async () => {
     if (!user) return
-    const { data } = await supabase.from('tasks').insert({ user_id: user.id, title: '', date: today, done: false }).select()
-    setTasks([...tasks, data[0]])
+    const { data, error } = await supabase.from('tasks').insert({ user_id: user.id, title: '', date: today, done: false }).select()
+    if (error) { console.error('addTask error', error); return }
+    setTasks(prev => [...prev, data[0]])
   }
 
   const deleteTask = async (taskId) => {
     await supabase.from('tasks').delete().eq('id', taskId)
-    setTasks(tasks.filter(t => t.id !== taskId))
+    setTasks(prev => prev.filter(t => t.id !== taskId))
   }
 
   const updateTaskTitle = async (task, title) => {
     await supabase.from('tasks').update({ title }).eq('id', task.id)
-    setTasks(tasks.map(t => t.id === task.id ? { ...t, title } : t))
+    setTasks(prev => prev.map(t => t.id === task.id ? { ...t, title } : t))
   }
 
   const toggleHabit = async (habitId, date) => {
@@ -190,7 +195,8 @@ export default function HabitTracker({ user: propUser, onLogout }) {
   }
 
   const toggleTask = async (task) => {
-    await supabase.from('tasks').update({ done: !task.done }).eq('id', task.id)
+    const { error } = await supabase.from('tasks').update({ done: !task.done }).eq('id', task.id)
+    if (error) { console.error('toggleTask error', error); return }
     const updated = tasks.map(t => t.id === task.id ? { ...t, done: !t.done } : t)
     setTasks(updated)
     if (updated.every(t => t.done) && updated.length > 0) { setCelebrate(true); setTimeout(() => setCelebrate(false), 3000) }
@@ -241,8 +247,9 @@ export default function HabitTracker({ user: propUser, onLogout }) {
 
       <div style={{ padding: isMobile ? 12 : 20 }}>
 
-        {/* HEADER */}
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10, marginBottom: 10 }}>
+        {/* HEADER — CHANGE 3: streak pill inline with date pill on the right */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10, marginBottom: 20 }}>
+          {/* Left: greeting */}
           <div>
             <h1 style={{ fontSize: isMobile ? 22 : 30, fontWeight: 900, color: '#0F172A', lineHeight: 1.2, margin: 0 }}>
               Hello <span style={{ color: GREEN }}>{firstName} ji,</span>
@@ -252,11 +259,25 @@ export default function HabitTracker({ user: propUser, onLogout }) {
             </p>
             <div style={{ height: 2, width: isMobile ? 180 : 300, background: `linear-gradient(90deg, ${GREEN}, transparent)`, marginTop: 5, borderRadius: 2 }} />
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+
+          {/* Right: streak pill + date pill + avatar — all inline */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+
+            {/* CHANGE 3: Streak pill — same height/style as date pill, placed left of date */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 20, background: 'white', boxShadow: '0 2px 10px rgba(0,0,0,0.08)' }}>
+              <span style={{ fontSize: 13 }}>🔥</span>
+              <span style={{ fontWeight: 700, color: GREEN, fontSize: 11 }}>{streak}d</span>
+              <div style={{ width: 1, height: 12, background: '#E2E8F0' }} />
+              <span style={{ fontWeight: 600, color: '#64748B', fontSize: 11 }}>{totalDays} days</span>
+            </div>
+
+            {/* Date pill */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 20, background: 'white', boxShadow: '0 2px 10px rgba(0,0,0,0.08)' }}>
               <span style={{ fontSize: 12 }}>📅</span>
               <span style={{ fontWeight: 600, color: '#334155', fontSize: 11 }}>{todayLabel}</span>
             </div>
+
+            {/* Avatar */}
             <div style={{ position: 'relative' }}>
               <button onClick={() => setShowUserMenu(!showUserMenu)}
                 style={{ width: 38, height: 38, borderRadius: '50%', background: GREEN, border: 'none', cursor: 'pointer', color: YELLOW, fontWeight: 700, fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -273,19 +294,7 @@ export default function HabitTracker({ user: propUser, onLogout }) {
           </div>
         </div>
 
-        {/* CHANGE 2: Streak pill — below header, left-aligned, wide */}
-        <div style={{ marginBottom: 14 }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 12, padding: '6px 16px', borderRadius: 20, background: 'white', boxShadow: '0 2px 10px rgba(40,94,44,0.10)' }}>
-            <span style={{ fontSize: 16 }}>🔥</span>
-            <span style={{ fontSize: 17, fontWeight: 900, color: GREEN }}>{streak}</span>
-            <span style={{ fontSize: 11, fontWeight: 600, color: '#4a7c4e' }}>day streak</span>
-            <div style={{ width: 1, height: 16, background: '#E2E8F0' }} />
-            <span style={{ fontSize: 14, fontWeight: 800, color: GREEN }}>{totalDays}</span>
-            <span style={{ fontSize: 11, fontWeight: 600, color: '#4a7c4e' }}>total active days</span>
-          </div>
-        </div>
-
-        {/* CHANGE 1: graph gets most width (1fr), bowl fixed 160px, task fixed 220px */}
+        {/* ROW 1 */}
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 160px 220px', gap: 14, marginBottom: 16 }}>
 
           {/* Chart */}
