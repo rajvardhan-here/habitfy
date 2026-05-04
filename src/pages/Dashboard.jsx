@@ -1,56 +1,47 @@
-  import { useState, useEffect } from 'react'
-  import { supabase } from '../lib/supabase'
-  import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom'
-  import { motion, AnimatePresence } from 'framer-motion'
-  import HabitTracker from './HabitTracker'
-  import Finance from './Finance'
-  import Journal from './Journal'
+export default function Dashboard() {
+  const [user, setUser] = useState(null)
+  const [expanded, setExpanded] = useState(false)
+  const navigate = useNavigate()
+  const location = useLocation()
+  
+  // Mobile detection
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
 
-  const GREEN = '#285E2C'
-  const YELLOW = '#FFE67C'
-  const YELLOW_DARK = '#C9A800'
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => setUser(user))
+  }, [])
 
-  const navItems = [
-    { icon: '⊞', label: 'Habit Tracker', path: '/habits' },
-    { icon: '◫', label: 'Finance', path: '/finance' },
-    { icon: '☰', label: 'Notes', path: '/journal' },
-  ]
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+  }
 
-  export default function Dashboard() {
-    const [user, setUser] = useState(null)
-    const [expanded, setExpanded] = useState(false)
-    const navigate = useNavigate()
-    const location = useLocation()
+  const firstName = user?.user_metadata?.name?.split(' ')[0] || 'User'
 
-    useEffect(() => {
-      supabase.auth.getUser().then(({ data: { user } }) => setUser(user))
-    }, [])
+  return (
+    <div style={{ display: 'flex', minHeight: '100vh', background: YELLOW }}>
 
-    const handleLogout = async () => {
-      await supabase.auth.signOut()
-    }
-
-    const firstName = user?.user_metadata?.name?.split(' ')[0] || 'User'
-
-    return (
-      <div className="flex min-h-screen" style={{ background: YELLOW }}>
-
-        {/* Sidebar */}
+      {/* Desktop Sidebar — sirf desktop pe dikhao */}
+      {!isMobile && (
         <motion.div
           onMouseEnter={() => setExpanded(true)}
           onMouseLeave={() => setExpanded(false)}
           animate={{ width: expanded ? 180 : 64 }}
           transition={{ duration: 0.2, ease: 'easeInOut' }}
-          className="flex flex-col py-6 z-50 fixed top-0 left-0 h-screen overflow-hidden"
           style={{
-            background: GREEN,
-            boxShadow: '2px 0 16px rgba(40,94,44,0.25)',
-            borderRight: '1px solid rgba(40,94,44,0.3)'
+            background: GREEN, boxShadow: '2px 0 16px rgba(40,94,44,0.25)',
+            borderRight: '1px solid rgba(40,94,44,0.3)',
+            display: 'flex', flexDirection: 'column', padding: '24px 0',
+            zIndex: 50, position: 'fixed', top: 0, left: 0, height: '100vh', overflow: 'hidden'
           }}>
 
           {/* Logo */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 32, padding: '0 12px' }}>
-            <div style={{ width: 40, height: 40, borderRadius: 12, background: YELLOW, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 2px 10px rgba(255,230,124,0.4)' }}>
+            <div style={{ width: 40, height: 40, borderRadius: 12, background: YELLOW, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <span style={{ color: GREEN, fontWeight: 900, fontSize: 18 }}>✦</span>
             </div>
             <AnimatePresence>
@@ -90,7 +81,7 @@
             })}
           </div>
 
-          {/* Bottom */}
+          {/* Bottom user + logout */}
           <div style={{ padding: '0 8px' }}>
             <AnimatePresence>
               {expanded && user && (
@@ -102,12 +93,7 @@
               )}
             </AnimatePresence>
             <button onClick={handleLogout}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 12,
-                borderRadius: 12, padding: '10px 12px', width: '100%',
-                background: 'transparent', border: '1px solid transparent',
-                cursor: 'pointer', whiteSpace: 'nowrap'
-              }}>
+              style={{ display: 'flex', alignItems: 'center', gap: 12, borderRadius: 12, padding: '10px 12px', width: '100%', background: 'transparent', border: '1px solid transparent', cursor: 'pointer' }}>
               <span style={{ fontSize: 18, flexShrink: 0 }}>🚪</span>
               <AnimatePresence>
                 {expanded && (
@@ -120,16 +106,53 @@
             </button>
           </div>
         </motion.div>
+      )}
 
-        {/* Main */}
-        <div style={{ flex: 1, marginLeft: 64 }}>
-          <Routes>
-            <Route path="/" element={<Navigate to="/habits" replace />} />
-            <Route path="/habits" element={<HabitTracker user={user} onLogout={handleLogout} />} />
-            <Route path="/finance" element={<Finance />} />
-            <Route path="/journal" element={<Journal />} />
-          </Routes>
-        </div>
+      {/* Main Content */}
+      <div style={{ flex: 1, marginLeft: isMobile ? 0 : 64, marginBottom: isMobile ? 70 : 0 }}>
+        <Routes>
+          <Route path="/" element={<Navigate to="/habits" replace />} />
+          <Route path="/habits" element={<HabitTracker user={user} onLogout={handleLogout} />} />
+          <Route path="/finance" element={<Finance />} />
+          <Route path="/journal" element={<Journal />} />
+        </Routes>
       </div>
-    )
-  }
+
+      {/* Mobile Bottom Navigation */}
+      {isMobile && (
+        <div style={{
+          position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 100,
+          background: GREEN, display: 'flex', justifyContent: 'space-around',
+          padding: '8px 0 12px 0', boxShadow: '0 -4px 20px rgba(40,94,44,0.3)'
+        }}>
+          {navItems.map((item) => {
+            const active = location.pathname === item.path
+            return (
+              <button key={item.path} onClick={() => navigate(item.path)}
+                style={{
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
+                  background: 'transparent', border: 'none', cursor: 'pointer',
+                  padding: '4px 20px', borderRadius: 12,
+                  opacity: active ? 1 : 0.6
+                }}>
+                <span style={{ fontSize: 22 }}>{item.icon}</span>
+                <span style={{ fontSize: 9, fontWeight: 700, color: active ? YELLOW : 'rgba(255,230,124,0.7)' }}>
+                  {item.label}
+                </span>
+                {active && (
+                  <div style={{ width: 4, height: 4, borderRadius: '50%', background: YELLOW }} />
+                )}
+              </button>
+            )
+          })}
+          {/* Logout button mobile */}
+          <button onClick={handleLogout}
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, background: 'transparent', border: 'none', cursor: 'pointer', padding: '4px 20px', opacity: 0.6 }}>
+            <span style={{ fontSize: 22 }}>🚪</span>
+            <span style={{ fontSize: 9, fontWeight: 700, color: '#EF4444' }}>Logout</span>
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
