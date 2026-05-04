@@ -320,7 +320,7 @@ export default function HabitTracker({ user: propUser, onLogout }) {
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 160px 1fr', gap: 14, marginBottom: 16 }}>
 
           {/* Chart */}
-          <div style={{ ...C, padding: 14, height: isMobile ? 200 : 220, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ ...C, padding: 13, height: isMobile ? 200 : 220, display: 'flex', flexDirection: 'column' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6, flexShrink: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <h3 style={{ fontWeight: 700, fontSize: 13, color: '#0F172A', margin: 0 }}>Progress</h3>
