@@ -27,7 +27,6 @@ export default function Finance() {
 
   const categories = ['Food', 'Transport', 'Shopping', 'Entertainment', 'Health', 'Other']
 
-  // Quote rotation every 5 seconds with fade
   useEffect(() => {
     const interval = setInterval(() => {
       setQuoteVisible(false)
@@ -50,22 +49,38 @@ export default function Finance() {
     if (user) fetchBudget(user.id)
   }, [selectedMonth])
 
+  // FIX 1: use maybeSingle() + date range instead of month column
   const fetchBudget = async (uid) => {
-    const { data } = await supabase.from('budgets').select('*').eq('user_id', uid).eq('month', selectedMonth).single()
+    const { data } = await supabase
+      .from('budgets')
+      .select('*')
+      .eq('user_id', uid)
+      .gte('date', selectedMonth + '-01')
+      .lte('date', selectedMonth + '-31')
+      .maybeSingle()
     setBudget(data)
   }
 
   const fetchExpenses = async (uid) => {
-    const { data } = await supabase.from('expenses').select('*').eq('user_id', uid).order('date', { ascending: false })
+    const { data } = await supabase
+      .from('expenses')
+      .select('*')
+      .eq('user_id', uid)
+      .order('date', { ascending: false })
     setExpenses(data || [])
   }
 
+  // FIX 2: saveBudget closing braces were broken
   const saveBudget = async () => {
     if (!newBudget) return
     if (budget) {
       await supabase.from('budgets').update({ amount: parseFloat(newBudget) }).eq('id', budget.id)
     } else {
-      await supabase.from('budgets').insert({ user_id: user.id, month: selectedMonth, amount: parseFloat(newBudget) })
+      await supabase.from('budgets').insert({
+        user_id: user.id,
+        date: selectedMonth + '-01',
+        amount: parseFloat(newBudget)
+      })
     }
     fetchBudget(user.id)
     setNewBudget('')
@@ -145,7 +160,6 @@ export default function Finance() {
   const remaining = budget ? budget.amount - totalSpent : 0
   const isOverBudget = budget && totalSpent > budget.amount
 
-  // Chart data — dates of selected month
   const daysInMonth = new Date(selectedMonth.split('-')[0], selectedMonth.split('-')[1], 0).getDate()
   const chartData = [...Array(daysInMonth)].map((_, i) => {
     const day = i + 1
@@ -167,7 +181,7 @@ export default function Finance() {
     <div style={{ padding: isMobile ? 12 : 24, overflowY: 'auto', minHeight: '100vh', background: YELLOW, fontFamily: 'Inter, sans-serif' }}>
 
       {/* Header with quote */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 12, marginBottom: 20}}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 12, marginBottom: 20 }}>
         <div>
           <h1 style={{ fontSize: isMobile ? 22 : 26, fontWeight: 900, color: GREEN, margin: '0 0 4px 0' }}>
             Mahine ka Kharch 💰
@@ -177,7 +191,6 @@ export default function Finance() {
           </p>
         </div>
 
-        {/* Rotating quote */}
         <div style={{ background: 'rgba(40,94,44,0.12)', backdropFilter: 'blur(10px)', border: '1px solid rgba(40,94,44,0.25)', borderRadius: 30, padding: '5px 16px', width: '100%', textAlign: 'center' }}>
           <p style={{
             fontSize: 17, color: GREEN, margin: 0, fontStyle: 'italic', textAlign: 'center',
