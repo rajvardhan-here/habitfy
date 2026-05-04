@@ -82,12 +82,10 @@ export default function HabitTracker({ user: propUser, onLogout }) {
   const [celebrate, setCelebrate] = useState(false)
   const [halfOffset, setHalfOffset] = useState(0)
   const [streak, setStreak] = useState(0)
-  const [totalDays, setTotalDays] = useState(0)
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [showMonthPicker, setShowMonthPicker] = useState(false)
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth())
   const [selectedYear] = useState(new Date().getFullYear())
-  // CHANGE 2: reactive viewport so mobile works correctly
   const [vw, setVw] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024)
 
   useEffect(() => {
@@ -123,6 +121,9 @@ export default function HabitTracker({ user: propUser, onLogout }) {
   }
   const monthDays = getDaysInMonth(selectedMonth, selectedYear)
 
+  // Current month days only (for bowl — always current month)
+  const currentMonthDays = getDaysInMonth(new Date().getMonth(), new Date().getFullYear())
+
   useEffect(() => {
     const u = propUser || null
     if (u) { setUser(u); fetchHabits(u.id); fetchTasks(u.id) }
@@ -135,15 +136,17 @@ export default function HabitTracker({ user: propUser, onLogout }) {
     const { data } = await supabase.from('habits').select('*, habit_logs(*)').eq('user_id', uid)
     setHabits(data || [])
     if (data && data.length > 0) {
-      let s = 0; const d = new Date()
+      // Streak: consecutive days where ALL habits done (past only)
+      let s = 0
+      const d = new Date()
       for (let i = 0; i < 365; i++) {
         const ds = d.toISOString().split('T')[0]
-        if (data.every(h => h.habit_logs && h.habit_logs.some(l => l.date === ds))) { s++; d.setDate(d.getDate() - 1) } else break
+        if (ds > today) { d.setDate(d.getDate() - 1); continue }
+        if (data.every(h => h.habit_logs && h.habit_logs.some(l => l.date === ds))) {
+          s++; d.setDate(d.getDate() - 1)
+        } else break
       }
       setStreak(s)
-      const allDates = new Set()
-      data.forEach(h => h.habit_logs && h.habit_logs.forEach(l => allDates.add(l.date)))
-      setTotalDays(allDates.size)
     }
   }
 
@@ -152,18 +155,18 @@ export default function HabitTracker({ user: propUser, onLogout }) {
     setTasks(data || [])
   }
 
-const addHabit = async () => {
-  if (!newHabit.trim() || !user) return
-  
-  const { data, error } = await supabase
-    .from('habits')
-    .insert({ user_id: user.id, name: newHabit, color: GREEN })
-    .select()  // yeh theek hai, bas policy fix honi chahiye
-  
-  if (error) { console.error('addHabit error', error); return }
-  setHabits(prev => [...prev, { ...data[0], habit_logs: [] }])
-  setNewHabit('')
-}
+  const addHabit = async () => {
+    if (!newHabit.trim()) return
+    const currentUser = user || (await supabase.auth.getUser()).data.user
+    if (!currentUser) return
+    const { data, error } = await supabase
+      .from('habits')
+      .insert({ user_id: currentUser.id, name: newHabit, color: GREEN })
+      .select()
+    if (error) { console.error('addHabit error', error); return }
+    setHabits(prev => [...prev, { ...data[0], habit_logs: [] }])
+    setNewHabit('')
+  }
 
   const deleteHabit = async (habitId) => {
     if (!confirm('Delete this habit and all its logs?')) return
@@ -172,10 +175,10 @@ const addHabit = async () => {
     setHabits(prev => prev.filter(h => h.id !== habitId))
   }
 
-  // CHANGE 2 FIX: addTask now works on mobile — uses functional state update and catches error
   const addTask = async () => {
-    if (!user) return
-    const { data, error } = await supabase.from('tasks').insert({ user_id: user.id, title: '', date: today, done: false }).select()
+    const currentUser = user || (await supabase.auth.getUser()).data.user
+    if (!currentUser) return
+    const { data, error } = await supabase.from('tasks').insert({ user_id: currentUser.id, title: '', date: today, done: false }).select()
     if (error) { console.error('addTask error', error); return }
     setTasks(prev => [...prev, data[0]])
   }
@@ -190,13 +193,15 @@ const addHabit = async () => {
     setTasks(prev => prev.map(t => t.id === task.id ? { ...t, title } : t))
   }
 
+  // ✅ Future dates allowed — pre-checkin enabled
   const toggleHabit = async (habitId, date) => {
-    if (date > today) return
+    const currentUser = user || (await supabase.auth.getUser()).data.user
+    if (!currentUser) return
     const habit = habits.find(h => h.id === habitId)
     const log = habit.habit_logs && habit.habit_logs.find(l => l.date === date)
     if (log) await supabase.from('habit_logs').delete().eq('id', log.id)
-    else await supabase.from('habit_logs').insert({ user_id: user.id, habit_id: habitId, date, done: true })
-    fetchHabits(user.id)
+    else await supabase.from('habit_logs').insert({ user_id: currentUser.id, habit_id: habitId, date, done: true })
+    fetchHabits(currentUser.id)
   }
 
   const toggleTask = async (task) => {
@@ -208,7 +213,6 @@ const addHabit = async () => {
   }
 
   const isDone = (habit, date) => habit.habit_logs && habit.habit_logs.some(l => l.date === date)
-  const isFuture = (date) => date > today
 
   const getHabitMonthProgress = (habit) => {
     if (!habit.habit_logs || habit.habit_logs.length === 0) return 0
@@ -219,6 +223,15 @@ const addHabit = async () => {
     return Math.round((weekDates.filter(d => isDone(habit, d.date)).length / weekDates.length) * 100)
   }
 
+  // Bowl: ONLY current month progress (resets on 1st)
+  const currentMonthProgress = habits.length > 0
+    ? Math.round(currentMonthDays.reduce((sum, day) => {
+        const done = habits.filter(h => isDone(h, day.fullDate)).length
+        return sum + (done / habits.length) * 100
+      }, 0) / currentMonthDays.length)
+    : 0
+
+  // Chart: selected month
   const monthProgress = habits.length > 0
     ? Math.round(monthDays.reduce((sum, day) => {
         const done = habits.filter(h => isDone(h, day.fullDate)).length
@@ -252,9 +265,8 @@ const addHabit = async () => {
 
       <div style={{ padding: isMobile ? 12 : 20 }}>
 
-        {/* HEADER — CHANGE 3: streak pill inline with date pill on the right */}
+        {/* HEADER */}
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10, marginBottom: 20 }}>
-          {/* Left: greeting */}
           <div>
             <h1 style={{ fontSize: isMobile ? 22 : 30, fontWeight: 900, color: '#0F172A', lineHeight: 1.2, margin: 0 }}>
               Hello <span style={{ color: GREEN }}>{firstName} ji,</span>
@@ -265,24 +277,15 @@ const addHabit = async () => {
             <div style={{ height: 2, width: isMobile ? 180 : 300, background: `linear-gradient(90deg, ${GREEN}, transparent)`, marginTop: 5, borderRadius: 2 }} />
           </div>
 
-          {/* Right: streak pill + date pill + avatar — all inline */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-
-            {/* CHANGE 3: Streak pill — same height/style as date pill, placed left of date */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 20, background: 'white', boxShadow: '0 2px 10px rgba(0,0,0,0.08)' }}>
               <span style={{ fontSize: 13 }}>🔥</span>
               <span style={{ fontWeight: 700, color: GREEN, fontSize: 11 }}>{streak}d</span>
-              <div style={{ width: 1, height: 12, background: '#E2E8F0' }} />
-              <span style={{ fontWeight: 600, color: '#64748B', fontSize: 11 }}>{totalDays} days</span>
             </div>
-
-            {/* Date pill */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 20, background: 'white', boxShadow: '0 2px 10px rgba(0,0,0,0.08)' }}>
               <span style={{ fontSize: 12 }}>📅</span>
               <span style={{ fontWeight: 600, color: '#334155', fontSize: 11 }}>{todayLabel}</span>
             </div>
-
-            {/* Avatar */}
             <div style={{ position: 'relative' }}>
               <button onClick={() => setShowUserMenu(!showUserMenu)}
                 style={{ width: 38, height: 38, borderRadius: '50%', background: GREEN, border: 'none', cursor: 'pointer', color: YELLOW, fontWeight: 700, fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -349,12 +352,13 @@ const addHabit = async () => {
             </div>
           </div>
 
-          {/* Water Bowl */}
+          {/* Water Bowl — current month only, no "Total X days" */}
           <div style={{ ...C, padding: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: isMobile ? 'auto' : 220 }}>
             <p style={{ fontWeight: 700, fontSize: 11, color: '#0F172A', margin: '0 0 2px 0', alignSelf: 'flex-start' }}>Overall</p>
-            <p style={{ fontSize: 9, color: '#94A3B8', margin: '0 0 4px 0', alignSelf: 'flex-start' }}>{MONTHS[selectedMonth]} {selectedYear}</p>
-            <WaterBowl percent={monthProgress} />
-            <p style={{ fontSize: 9, color: '#4a7c4e', margin: '2px 0 0 0', textAlign: 'center', fontWeight: 600 }}>Total: {totalDays} days</p>
+            <p style={{ fontSize: 9, color: '#94A3B8', margin: '0 0 4px 0', alignSelf: 'flex-start' }}>
+              {MONTHS[new Date().getMonth()]} {new Date().getFullYear()}
+            </p>
+            <WaterBowl percent={currentMonthProgress} />
           </div>
 
           {/* Extra Task of the Day */}
@@ -410,7 +414,7 @@ const addHabit = async () => {
               <div style={{ display: 'flex', gap: 3, flex: 1 }}>
                 {weekDates.map((d, i) => (
                   <div key={i} style={{ flex: 1, textAlign: 'center' }}>
-                    <p style={{ fontSize: isMobile ? 7 : 9, fontWeight: 600, color: d.date === today ? GREEN : (isFuture(d.date) ? '#CBD5E1' : '#94A3B8'), margin: 0 }}>{d.label}</p>
+                    <p style={{ fontSize: isMobile ? 7 : 9, fontWeight: 600, color: d.date === today ? GREEN : '#94A3B8', margin: 0 }}>{d.label}</p>
                   </div>
                 ))}
               </div>
@@ -433,22 +437,22 @@ const addHabit = async () => {
                     </div>
                     <div style={{ display: 'flex', gap: 3, flex: 1 }}>
                       {weekDates.map((day) => {
-                        const future = isFuture(day.date)
+                        const isToday = day.date === today
                         return (
                           <div key={day.date} style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
                             <button
-                              onClick={() => !future && toggleHabit(habit.id, day.date)}
-                              disabled={future}
-                              title={future ? 'Cannot mark future dates' : ''}
+                              onClick={() => toggleHabit(habit.id, day.date)}
+                              title={isDone(habit, day.date) ? 'Mark undone' : 'Mark done'}
                               style={{
                                 width: isMobile ? 14 : 17, height: isMobile ? 14 : 17, borderRadius: 3,
-                                border: `2px solid ${future ? '#E2E8F0' : (isDone(habit, day.date) ? GREEN : '#CBD5E1')}`,
-                                background: future ? '#F8FAFC' : (isDone(habit, day.date) ? GREEN : 'transparent'),
-                                cursor: future ? 'not-allowed' : 'pointer',
+                                border: `2px solid ${isDone(habit, day.date) ? GREEN : (isToday ? GREEN : '#CBD5E1')}`,
+                                background: isDone(habit, day.date) ? GREEN : 'transparent',
+                                cursor: 'pointer',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                opacity: future ? 0.4 : 1
+                                opacity: 1,
+                                boxShadow: isToday && !isDone(habit, day.date) ? `0 0 0 2px ${YELLOW}` : 'none'
                               }}>
-                              {!future && isDone(habit, day.date) && <span style={{ color: YELLOW, fontSize: 7, fontWeight: 700 }}>✓</span>}
+                              {isDone(habit, day.date) && <span style={{ color: YELLOW, fontSize: 7, fontWeight: 700 }}>✓</span>}
                             </button>
                           </div>
                         )
@@ -470,7 +474,7 @@ const addHabit = async () => {
           </div>
 
           <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-            <input id="habitInput" value={newHabit} onChange={e => setNewHabit(e.target.value)}
+            <input value={newHabit} onChange={e => setNewHabit(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && addHabit()}
               placeholder="Add habit and press Enter..."
               style={{ flex: 1, borderRadius: 12, padding: '8px 14px', outline: 'none', background: '#F8FAFC', border: `1px solid ${GREEN_LIGHT}`, color: '#0F172A', fontSize: 12 }} />
