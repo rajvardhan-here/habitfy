@@ -5,33 +5,98 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianG
 
 const HABIT_ICONS = ['💪', '📚', '💻', '✍️', '🧘', '🎯', '🏃', '🎨', '🎵', '💡']
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-
+const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 const GREEN = '#285E2C'
 const GREEN_LIGHT = '#E8F5E9'
 const YELLOW = '#FFE67C'
 
-function CircularProgress({ percent }) {
-  const r = 38
+// CHANGE 7: Bigger bowl with cap, overflow animation at 95%
+function WaterBowl({ percent }) {
+  const isOverflow = percent >= 95
+  const waveY = 100 - percent
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '12px 0' }}>
+      <div style={{ position: 'relative', width: 110, height: 110 }}>
+        <svg viewBox="0 0 110 110" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
+          <defs>
+            <clipPath id="bowlClip">
+              <ellipse cx="55" cy="58" rx="46" ry="46" />
+            </clipPath>
+            <linearGradient id="waterGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#4CAF50" stopOpacity={0.8} />
+              <stop offset="100%" stopColor={GREEN} stopOpacity={1} />
+            </linearGradient>
+          </defs>
+
+          {/* Bowl body */}
+          <ellipse cx="55" cy="58" rx="46" ry="46" fill={GREEN_LIGHT} stroke={GREEN} strokeWidth="2.5" />
+
+          {/* Water fill */}
+          <g clipPath="url(#bowlClip)">
+            <rect x="0" y={12 + waveY * 0.88} width="110" height="110" fill="url(#waterGrad)" opacity="0.85" />
+            <motion.path
+              d={`M-10,${12 + waveY * 0.88} C15,${12 + waveY * 0.88 - 7} 40,${12 + waveY * 0.88 + 7} 65,${12 + waveY * 0.88} C90,${12 + waveY * 0.88 - 7} 110,${12 + waveY * 0.88 + 5} 130,${12 + waveY * 0.88} L130,110 L-10,110 Z`}
+              fill={GREEN} opacity={0.5}
+              animate={{ x: [0, -50, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'linear' }} />
+            <motion.path
+              d={`M-10,${12 + waveY * 0.88 + 4} C20,${12 + waveY * 0.88 - 4} 45,${12 + waveY * 0.88 + 9} 70,${12 + waveY * 0.88 + 3} C95,${12 + waveY * 0.88 - 5} 115,${12 + waveY * 0.88 + 7} 130,${12 + waveY * 0.88} L130,110 L-10,110 Z`}
+              fill="#4CAF50" opacity={0.3}
+              animate={{ x: [0, 50, 0] }}
+              transition={{ duration: 2.5, repeat: Infinity, ease: 'linear' }} />
+          </g>
+
+          {/* Bowl border overlay */}
+          <ellipse cx="55" cy="58" rx="46" ry="46" fill="none" stroke={GREEN} strokeWidth="2.5" />
+
+          {/* Open cap / rim at top - like a mug opening */}
+          <ellipse cx="55" cy="13" rx="46" ry="9" fill={GREEN_LIGHT} stroke={GREEN} strokeWidth="2" />
+          <ellipse cx="55" cy="13" rx="38" ry="6" fill="white" stroke={GREEN} strokeWidth="1.5" opacity="0.8" />
+
+          {/* Percentage text */}
+          <text x="55" y="60" textAnchor="middle" style={{ fontSize: 17, fontWeight: 900, fill: percent > 50 ? 'white' : GREEN }}>{percent}%</text>
+          <text x="55" y="74" textAnchor="middle" style={{ fontSize: 8, fill: percent > 50 ? 'rgba(255,255,255,0.8)' : '#94A3B8' }}>this month</text>
+        </svg>
+
+        {/* Overflow drops when >= 95% */}
+        {isOverflow && (
+          <>
+            <motion.div style={{ position: 'absolute', top: 2, left: 32, width: 7, height: 14, borderRadius: '50%', background: GREEN, opacity: 0.8 }}
+              animate={{ y: [0, -8, 0], scaleY: [1, 1.3, 1] }}
+              transition={{ duration: 1.0, repeat: Infinity }} />
+            <motion.div style={{ position: 'absolute', top: 0, left: 52, width: 6, height: 12, borderRadius: '50%', background: '#4CAF50', opacity: 0.7 }}
+              animate={{ y: [0, -10, 0], scaleY: [1, 1.4, 1] }}
+              transition={{ duration: 1.3, repeat: Infinity, delay: 0.4 }} />
+            <motion.div style={{ position: 'absolute', top: 3, left: 70, width: 5, height: 10, borderRadius: '50%', background: GREEN, opacity: 0.6 }}
+              animate={{ y: [0, -7, 0], scaleY: [1, 1.2, 1] }}
+              transition={{ duration: 0.9, repeat: Infinity, delay: 0.7 }} />
+            {/* Drips falling down the side */}
+            <motion.div style={{ position: 'absolute', top: 8, left: 8, width: 5, height: 5, borderRadius: '50%', background: GREEN }}
+              animate={{ y: [0, 20, 0], opacity: [0.8, 0, 0.8] }}
+              transition={{ duration: 1.4, repeat: Infinity }} />
+            <motion.div style={{ position: 'absolute', top: 8, right: 8, width: 4, height: 4, borderRadius: '50%', background: GREEN }}
+              animate={{ y: [0, 18, 0], opacity: [0.6, 0, 0.6] }}
+              transition={{ duration: 1.6, repeat: Infinity, delay: 0.6 }} />
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function MiniCircle({ percent }) {
+  const r = 9
   const circ = 2 * Math.PI * r
   const offset = circ - (percent / 100) * circ
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <svg width={95} height={95}>
-        <defs>
-          <linearGradient id="circGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#4CAF50" />
-            <stop offset="100%" stopColor={GREEN} />
-          </linearGradient>
-        </defs>
-        <circle cx={47} cy={47} r={r} fill="none" stroke={GREEN_LIGHT} strokeWidth={8} />
-        <motion.circle cx={47} cy={47} r={r} fill="none" stroke="url(#circGrad)" strokeWidth={8}
-          strokeDasharray={circ} strokeDashoffset={offset} strokeLinecap="round"
-          transform="rotate(-90 47 47)"
-          style={{ transition: 'stroke-dashoffset 1s ease' }} />
-        <text x="47" y="43" textAnchor="middle" style={{ fontSize: 18, fontWeight: 900, fill: GREEN }}>{percent}%</text>
-        <text x="47" y="58" textAnchor="middle" style={{ fontSize: 9, fill: '#94A3B8' }}>Completed</text>
-      </svg>
-    </div>
+    <svg width={22} height={22} style={{ flexShrink: 0 }}>
+      <circle cx={11} cy={11} r={r} fill="none" stroke={GREEN_LIGHT} strokeWidth={3} />
+      <circle cx={11} cy={11} r={r} fill="none" stroke={GREEN} strokeWidth={3}
+        strokeDasharray={circ} strokeDashoffset={offset} strokeLinecap="round"
+        transform="rotate(-90 11 11)"
+        style={{ transition: 'stroke-dashoffset 0.8s ease' }} />
+    </svg>
   )
 }
 
@@ -41,7 +106,7 @@ export default function HabitTracker({ user: propUser, onLogout }) {
   const [newHabit, setNewHabit] = useState('')
   const [user, setUser] = useState(propUser || null)
   const [celebrate, setCelebrate] = useState(false)
-  const [weekOffset, setWeekOffset] = useState(0)
+  const [halfOffset, setHalfOffset] = useState(0)
   const [streak, setStreak] = useState(0)
   const [totalDays, setTotalDays] = useState(0)
   const [showUserMenu, setShowUserMenu] = useState(false)
@@ -51,22 +116,31 @@ export default function HabitTracker({ user: propUser, onLogout }) {
 
   const isMobile = window.innerWidth < 768
   const today = new Date().toISOString().split('T')[0]
-  const ROW_HEIGHT = isMobile ? 'auto' : 220
+  // CHANGE 5: Current date display
+  const nowDate = new Date()
+  const todayLabel = `${DAYS[nowDate.getDay()]}, ${nowDate.getDate()} ${MONTHS[nowDate.getMonth()]}`
 
-  const getWeekDates = () => [...Array(isMobile ? 7 : 15)].map((_, i) => {
-    const d = new Date()
-    d.setDate(d.getDate() - (isMobile ? 3 : 7) + i + weekOffset * (isMobile ? 7 : 15))
-    return { label: d.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }), date: d.toISOString().split('T')[0] }
-  })
+  const getMonthHalfDates = () => {
+    const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate()
+    const start = halfOffset === 0 ? 1 : 16
+    const end = halfOffset === 0 ? 15 : daysInMonth
+    return Array.from({ length: end - start + 1 }, (_, i) => {
+      const day = start + i
+      const d = new Date(selectedYear, selectedMonth, day)
+      return {
+        label: d.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }),
+        date: d.toISOString().split('T')[0]
+      }
+    })
+  }
 
-  const weekDates = getWeekDates()
-  const weekRange = `${weekDates[0].label} - ${weekDates[weekDates.length - 1].label}`
+  const weekDates = getMonthHalfDates()
 
   const getDaysInMonth = (month, year) => {
     const days = new Date(year, month + 1, 0).getDate()
-    return [...Array(days)].map((_, i) => {
+    return Array.from({ length: days }, (_, i) => {
       const d = new Date(year, month, i + 1)
-      return { date: `${i + 1}`, fullDate: d.toISOString().split('T')[0], productivity: 0 }
+      return { date: `${i + 1}`, fullDate: d.toISOString().split('T')[0] }
     })
   }
 
@@ -89,8 +163,7 @@ export default function HabitTracker({ user: propUser, onLogout }) {
       for (let i = 0; i < 365; i++) {
         const ds = d.toISOString().split('T')[0]
         if (data.every(h => h.habit_logs && h.habit_logs.some(l => l.date === ds))) {
-          s++
-          d.setDate(d.getDate() - 1)
+          s++; d.setDate(d.getDate() - 1)
         } else break
       }
       setStreak(s)
@@ -119,9 +192,10 @@ export default function HabitTracker({ user: propUser, onLogout }) {
     setHabits(habits.filter(h => h.id !== habitId))
   }
 
+  // CHANGE 3: addTask with empty title so placeholder shows
   const addTask = async () => {
     if (!user) return
-    const { data } = await supabase.from('tasks').insert({ user_id: user.id, title: `Task ${tasks.length + 1}`, date: today, done: false }).select()
+    const { data } = await supabase.from('tasks').insert({ user_id: user.id, title: '', date: today, done: false }).select()
     setTasks([...tasks, data[0]])
   }
 
@@ -135,7 +209,9 @@ export default function HabitTracker({ user: propUser, onLogout }) {
     setTasks(tasks.map(t => t.id === task.id ? { ...t, title } : t))
   }
 
+  // CHANGE 6: Block toggling future dates
   const toggleHabit = async (habitId, date) => {
+    if (date > today) return // Cannot check future dates
     const habit = habits.find(h => h.id === habitId)
     const log = habit.habit_logs && habit.habit_logs.find(l => l.date === date)
     if (log) await supabase.from('habit_logs').delete().eq('id', log.id)
@@ -148,34 +224,45 @@ export default function HabitTracker({ user: propUser, onLogout }) {
     const updated = tasks.map(t => t.id === task.id ? { ...t, done: !t.done } : t)
     setTasks(updated)
     if (updated.every(t => t.done) && updated.length > 0) {
-      setCelebrate(true)
-      setTimeout(() => setCelebrate(false), 3000)
+      setCelebrate(true); setTimeout(() => setCelebrate(false), 3000)
     }
   }
 
   const isDone = (habit, date) => habit.habit_logs && habit.habit_logs.some(l => l.date === date)
+  const isFuture = (date) => date > today
 
-  const getProgress = (habit) => {
+  const getHabitMonthProgress = (habit) => {
     if (!habit.habit_logs || habit.habit_logs.length === 0) return 0
-    return Math.round((weekDates.filter(d => isDone(habit, d.date)).length / weekDates.length) * 100)
+    const done = monthDays.filter(d => isDone(habit, d.fullDate)).length
+    return Math.round((done / monthDays.length) * 100)
   }
 
-  const todayProgress = habits.length > 0
-    ? Math.round((habits.filter(h => isDone(h, today)).length / habits.length) * 100)
+  const getHabitHalfProgress = (habit) => {
+    if (!habit.habit_logs || habit.habit_logs.length === 0) return 0
+    const done = weekDates.filter(d => isDone(habit, d.date)).length
+    return Math.round((done / weekDates.length) * 100)
+  }
+
+  const monthProgress = habits.length > 0
+    ? Math.round(monthDays.reduce((sum, day) => {
+        const done = habits.filter(h => isDone(h, day.fullDate)).length
+        return sum + (done / habits.length) * 100
+      }, 0) / monthDays.length)
     : 0
 
+  // CHANGE 2: interval=1 means every date shown, we use interval prop on XAxis = 1 (every 2 days)
   const chartData = monthDays.map(day => ({
-    ...day,
+    date: day.date,
     productivity: habits.length > 0
       ? Math.round((habits.filter(h => isDone(h, day.fullDate)).length / habits.length) * 100)
       : 0
   }))
 
   const firstName = user && user.user_metadata && user.user_metadata.name
-    ? user.user_metadata.name.split(' ')[0]
-    : 'there'
+    ? user.user_metadata.name.split(' ')[0] : 'there'
   const avatarLetter = firstName[0].toUpperCase()
   const C = { background: 'white', borderRadius: 20, boxShadow: '0 2px 20px rgba(40,94,44,0.10)' }
+  const daysInSelectedMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate()
 
   return (
     <div style={{ minHeight: '100vh', background: YELLOW, fontFamily: 'Inter, sans-serif', overflowY: 'auto' }}>
@@ -198,31 +285,28 @@ export default function HabitTracker({ user: propUser, onLogout }) {
         {/* HEADER */}
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10, marginBottom: 20 }}>
           <div>
-            <h1 style={{ fontSize: isMobile ? 24 : 32, fontWeight: 900, color: '#0F172A', lineHeight: 1.2, margin: 0 }}>
+            <h1 style={{ fontSize: isMobile ? 22 : 30, fontWeight: 900, color: '#0F172A', lineHeight: 1.2, margin: 0 }}>
               Hello <span style={{ color: GREEN }}>{firstName} ji,</span>
             </h1>
-            <p style={{ fontSize: isMobile ? 14 : 18, fontStyle: 'italic', color: '#1a3a1c', fontFamily: 'Georgia, serif', marginTop: 4, marginBottom: 0 }}>
+            <p style={{ fontSize: isMobile ? 13 : 16, fontStyle: 'italic', color: '#1a3a1c', fontFamily: 'Georgia, serif', marginTop: 4, marginBottom: 0 }}>
               Stay consistent, don't fool yourself.
             </p>
-            <div style={{ height: 2, width: isMobile ? 200 : 340, background: `linear-gradient(90deg, ${GREEN}, transparent)`, marginTop: 6, borderRadius: 2 }} />
+            <div style={{ height: 2, width: isMobile ? 180 : 300, background: `linear-gradient(90deg, ${GREEN}, transparent)`, marginTop: 5, borderRadius: 2 }} />
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            {!isMobile && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', borderRadius: 12, background: 'white', boxShadow: '0 2px 10px rgba(0,0,0,0.08)' }}>
-                <span style={{ fontSize: 13 }}>📅</span>
-                <span style={{ fontSize: 12, fontWeight: 500, color: '#64748B' }}>{weekRange}</span>
-                <button onClick={() => setWeekOffset(p => p - 1)} style={{ color: '#94A3B8', fontWeight: 700, fontSize: 15, background: 'none', border: 'none', cursor: 'pointer' }}>‹</button>
-                <button onClick={() => setWeekOffset(p => p + 1)} style={{ color: '#94A3B8', fontWeight: 700, fontSize: 15, background: 'none', border: 'none', cursor: 'pointer' }}>›</button>
-              </div>
-            )}
+            {/* CHANGE 5: Show current date instead of date range */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 20, background: 'white', boxShadow: '0 2px 10px rgba(0,0,0,0.08)' }}>
+              <span style={{ fontSize: 12 }}>📅</span>
+              <span style={{ fontWeight: 600, color: '#334155', fontSize: 11 }}>{todayLabel}</span>
+            </div>
             <div style={{ position: 'relative' }}>
               <button onClick={() => setShowUserMenu(!showUserMenu)}
-                style={{ width: 40, height: 40, borderRadius: '50%', background: GREEN, border: 'none', cursor: 'pointer', color: YELLOW, fontWeight: 700, fontSize: 15, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                style={{ width: 38, height: 38, borderRadius: '50%', background: GREEN, border: 'none', cursor: 'pointer', color: YELLOW, fontWeight: 700, fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {avatarLetter}
               </button>
               {showUserMenu && (
-                <div style={{ position: 'absolute', right: 0, top: 48, borderRadius: 12, padding: 8, background: 'white', boxShadow: '0 8px 30px rgba(0,0,0,0.12)', minWidth: 160, zIndex: 50 }}>
+                <div style={{ position: 'absolute', right: 0, top: 46, borderRadius: 12, padding: 8, background: 'white', boxShadow: '0 8px 30px rgba(0,0,0,0.12)', minWidth: 160, zIndex: 50 }}>
                   <p style={{ padding: '4px 12px', fontSize: 12, fontWeight: 700, color: '#0F172A', margin: 0 }}>{firstName} ji</p>
                   <p style={{ padding: '0 12px 4px', fontSize: 11, color: '#94A3B8', margin: 0 }}>{user && user.email}</p>
                   <button onClick={onLogout} style={{ width: '100%', textAlign: 'left', padding: '8px 12px', borderRadius: 8, fontSize: 13, fontWeight: 500, color: '#EF4444', background: 'none', border: 'none', cursor: 'pointer' }}>🚪 Logout</button>
@@ -233,14 +317,14 @@ export default function HabitTracker({ user: propUser, onLogout }) {
         </div>
 
         {/* ROW 1 */}
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 160px 200px', gap: 14, marginBottom: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 160px 1fr', gap: 14, marginBottom: 16 }}>
 
           {/* Chart */}
-          <div style={{ ...C, padding: 14, height: isMobile ? 200 : ROW_HEIGHT, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ ...C, padding: 14, height: isMobile ? 200 : 220, display: 'flex', flexDirection: 'column' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6, flexShrink: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <h3 style={{ fontWeight: 700, fontSize: 13, color: '#0F172A', margin: 0 }}>Progress</h3>
-                <span style={{ fontSize: 12, fontWeight: 600, color: GREEN }}>{MONTHS[selectedMonth]}</span>
+                <span style={{ fontSize: 11, fontWeight: 600, color: GREEN }}>{MONTHS[selectedMonth]}</span>
               </div>
               <div style={{ position: 'relative' }}>
                 <button onClick={() => setShowMonthPicker(!showMonthPicker)}
@@ -260,7 +344,8 @@ export default function HabitTracker({ user: propUser, onLogout }) {
               </div>
             </div>
             <div style={{ flex: 1, minHeight: 0 }}>
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="110%">
+                {/* CHANGE 2: interval=1 shows every 2nd tick (0-indexed), so gap of 2 days */}
                 <AreaChart data={chartData} margin={{ top: 5, right: 5, left: -25, bottom: 0 }}>
                   <defs>
                     <linearGradient id="greenGrad" x1="0" y1="0" x2="0" y2="1">
@@ -269,140 +354,152 @@ export default function HabitTracker({ user: propUser, onLogout }) {
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
-                  <XAxis dataKey="date" tick={{ fontSize: 8, fill: '#94A3B8' }} axisLine={false} tickLine={false} interval={isMobile ? 4 : 1} />
+                  <XAxis dataKey="date" tick={{ fontSize: 8, fill: '#94A3B8' }} axisLine={false} tickLine={false} interval={1} />
                   <YAxis tick={{ fontSize: 8, fill: '#94A3B8' }} axisLine={false} tickLine={false} tickFormatter={v => `${v}%`} domain={[0, 100]} ticks={[0, 50, 100]} />
                   <Tooltip contentStyle={{ borderRadius: 10, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)', fontSize: 10 }}
                     formatter={v => [`${v}%`, 'Progress']}
                     labelFormatter={l => `${MONTHS[selectedMonth]} ${l}`}
                     labelStyle={{ fontWeight: 700, color: '#0F172A' }} />
                   <Area type="monotone" dataKey="productivity" stroke={GREEN} strokeWidth={2} fill="url(#greenGrad)"
-                    dot={false}
-                    activeDot={{ r: 4, fill: YELLOW, stroke: GREEN, strokeWidth: 2 }} />
+                    dot={false} activeDot={{ r: 4, fill: YELLOW, stroke: GREEN, strokeWidth: 2 }} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
           </div>
 
-          {/* Overall Progress + Streak — hidden on mobile, shown inline */}
-          {isMobile ? (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-              <div style={{ ...C, padding: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                <p style={{ fontWeight: 700, fontSize: 11, color: '#0F172A', margin: '0 0 6px 0' }}>Progress</p>
-                <CircularProgress percent={todayProgress} />
-              </div>
-              <div style={{ ...C, padding: 12, display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div style={{ width: 34, height: 34, borderRadius: '50%', background: GREEN, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <span style={{ fontSize: 16 }}>🔥</span>
-                </div>
-                <div>
-                  <p style={{ fontSize: 10, color: '#94A3B8', margin: 0, fontWeight: 600 }}>Streak</p>
-                  <p style={{ fontSize: 20, fontWeight: 900, color: '#0F172A', lineHeight: 1.1, margin: 0 }}>{streak} <span style={{ fontSize: 10, fontWeight: 500, color: '#94A3B8' }}>days</span></p>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div style={{ height: ROW_HEIGHT, display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <div style={{ ...C, padding: 12, flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                <p style={{ fontWeight: 700, fontSize: 11, color: '#0F172A', margin: '0 0 6px 0', alignSelf: 'flex-start' }}>Overall Progress</p>
-                <CircularProgress percent={todayProgress} />
-              </div>
-              <div style={{ ...C, padding: 12, display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div style={{ width: 34, height: 34, borderRadius: '50%', background: GREEN, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <span style={{ fontSize: 16 }}>🔥</span>
-                </div>
-                <div>
-                  <p style={{ fontSize: 10, color: '#94A3B8', margin: 0, fontWeight: 600 }}>Current Streak</p>
-                  <p style={{ fontSize: 20, fontWeight: 900, color: '#0F172A', lineHeight: 1.1, margin: 0 }}>{streak} <span style={{ fontSize: 10, fontWeight: 500, color: '#94A3B8' }}>days</span></p>
-                  <p style={{ fontSize: 10, color: GREEN, margin: 0, fontWeight: 600 }}>Total: {totalDays} days</p>
-                </div>
-              </div>
-            </div>
-          )}
+          {/* CHANGE 7: Water Bowl — bigger, with cap, overflow */}
+          <div style={{ ...C, padding: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: isMobile ? 'auto' : 220 }}>
+            <p style={{ fontWeight: 700, fontSize: 11, color: '#0F172A', margin: '0 0 2px 0', alignSelf: 'flex-start' }}>Overall</p>
+            <p style={{ fontSize: 9, color: '#94A3B8', margin: '0 0 4px 0', alignSelf: 'flex-start' }}>{MONTHS[selectedMonth]} {selectedYear}</p>
+            <WaterBowl percent={monthProgress} />
+            <p style={{ fontSize: 9, color: '#4a7c4e', margin: '2px 0 0 0', textAlign: 'center', fontWeight: 600 }}>Total: {totalDays} days</p>
+          </div>
 
-          {/* Extra Task */}
-          <div style={{ ...C, padding: 14, height: isMobile ? 'auto' : ROW_HEIGHT, display: 'flex', flexDirection: 'column' }}>
-            <p style={{ fontWeight: 700, fontSize: 12, color: '#0F172A', margin: '0 0 10px 0', flexShrink: 0 }}>Tasks Today</p>
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 7, overflowY: 'auto', maxHeight: isMobile ? 120 : 'none' }}>
-              <AnimatePresence>
-                {tasks.map((task, i) => (
-                  <motion.div key={task.id} initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                    style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-                    <button onClick={() => toggleTask(task)}
-                      style={{ width: 18, height: 18, borderRadius: 4, border: `2px solid ${task.done ? GREEN : '#CBD5E1'}`, background: task.done ? GREEN : 'transparent', cursor: 'pointer', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      {task.done && <span style={{ color: YELLOW, fontSize: 8, fontWeight: 700 }}>✓</span>}
-                    </button>
-                    <input value={task.title} onChange={e => updateTaskTitle(task, e.target.value)}
-                      placeholder={`Task ${i + 1}`}
-                      style={{ flex: 1, outline: 'none', background: 'transparent', border: 'none', fontSize: 11, color: task.done ? '#94A3B8' : '#0F172A', textDecoration: task.done ? 'line-through' : 'none' }} />
-                    <button onClick={() => deleteTask(task.id)}
-                      style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 12, opacity: 0.4, flexShrink: 0, padding: 0 }}>🗑</button>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
+          {/* RIGHT COLUMN: Extra Task of the Day + Streak (CHANGES 3 & 4) */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, height: isMobile ? 'auto' : 220 }}>
+
+            {/* CHANGE 3: "Extra Task of the Day" with Enter placeholder */}
+            <div style={{ ...C, padding: 14, flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+              <p style={{ fontWeight: 700, fontSize: 12, color: '#0F172A', margin: '0 0 8px 0', flexShrink: 0 }}>⚡ Extra Task of the Day</p>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6, overflowY: 'auto' }}>
+                <AnimatePresence>
+                  {tasks.map((task) => (
+                    <motion.div key={task.id} initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                      style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <button onClick={() => toggleTask(task)}
+                        style={{ width: 18, height: 18, borderRadius: 4, border: `2px solid ${task.done ? GREEN : '#CBD5E1'}`, background: task.done ? GREEN : 'transparent', cursor: 'pointer', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {task.done && <span style={{ color: YELLOW, fontSize: 8, fontWeight: 700 }}>✓</span>}
+                      </button>
+                      <input value={task.title} onChange={e => updateTaskTitle(task, e.target.value)}
+                        placeholder="Enter task..."
+                        style={{ flex: 1, outline: 'none', background: 'transparent', border: 'none', fontSize: 11, color: task.done ? '#94A3B8' : '#0F172A', textDecoration: task.done ? 'line-through' : 'none' }} />
+                      <button onClick={() => deleteTask(task.id)}
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: '#9CA3AF', flexShrink: 0, padding: 0 }}>🗑</button>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+              <div style={{ flexShrink: 0, marginTop: 6 }}>
+                <button onClick={addTask}
+                  style={{ width: '100%', height: tasks.length === 0 ? 50 : 28, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 10, border: `2px dashed ${GREEN}`, background: 'transparent', cursor: 'pointer' }}>
+                  <span style={{ fontSize: 18, color: GREEN }}>+</span>
+                </button>
+                <p style={{ fontSize: 9, color: '#94A3B8', textAlign: 'center', marginTop: 3, marginBottom: 0 }}>Today only · removed tomorrow</p>
+              </div>
             </div>
-            <div style={{ flexShrink: 0, marginTop: 10 }}>
-              <button onClick={addTask}
-                style={{ width: '100%', height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 10, border: `2px dashed ${GREEN}`, background: 'transparent', cursor: 'pointer' }}>
-                <span style={{ fontSize: 22, color: GREEN }}>+</span>
-              </button>
-              <p style={{ fontSize: 9, color: '#94A3B8', textAlign: 'center', marginTop: 4, marginBottom: 0 }}>Today only · removed tomorrow</p>
+
+            {/* CHANGE 4: Streak — separate container */}
+            <div style={{ ...C, padding: '10px 14px', display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+              <div style={{ fontSize: 28 }}>🔥</div>
+              <div>
+                <p style={{ margin: 0, fontSize: 9, color: '#94A3B8', fontWeight: 600 }}>Current Streak</p>
+                <p style={{ margin: 0, fontSize: 22, fontWeight: 900, color: GREEN, lineHeight: 1.1 }}>{streak}<span style={{ fontSize: 12, fontWeight: 600, color: '#4a7c4e' }}> days</span></p>
+              </div>
+              <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
+                <p style={{ margin: 0, fontSize: 9, color: '#94A3B8', fontWeight: 600 }}>Total Active</p>
+                <p style={{ margin: 0, fontSize: 16, fontWeight: 800, color: GREEN }}>{totalDays}<span style={{ fontSize: 10, color: '#4a7c4e' }}> days</span></p>
+              </div>
             </div>
           </div>
         </div>
+
+        {/* CHANGE 1: 15-Day Report section REMOVED */}
 
         {/* HABIT TABLE */}
         <div style={{ ...C, padding: isMobile ? 12 : 16, overflowX: 'auto' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
             <h3 style={{ fontWeight: 700, fontSize: 15, color: '#0F172A', margin: 0 }}>Habit Tracker</h3>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <button onClick={() => setWeekOffset(p => p - 1)} style={{ width: 28, height: 28, borderRadius: 8, background: GREEN_LIGHT, border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 15, color: GREEN }}>‹</button>
-              <button onClick={() => setWeekOffset(p => p + 1)} style={{ width: 28, height: 28, borderRadius: 8, background: GREEN_LIGHT, border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 15, color: GREEN }}>›</button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <button onClick={() => setHalfOffset(0)}
+                style={{ padding: '4px 10px', borderRadius: 20, border: 'none', cursor: 'pointer', fontSize: 10, fontWeight: 600, background: halfOffset === 0 ? GREEN : GREEN_LIGHT, color: halfOffset === 0 ? YELLOW : GREEN }}>
+                1–15
+              </button>
+              <button onClick={() => setHalfOffset(1)}
+                style={{ padding: '4px 10px', borderRadius: 20, border: 'none', cursor: 'pointer', fontSize: 10, fontWeight: 600, background: halfOffset === 1 ? GREEN : GREEN_LIGHT, color: halfOffset === 1 ? YELLOW : GREEN }}>
+                16–{daysInSelectedMonth}
+              </button>
             </div>
           </div>
 
-          <div style={{ minWidth: isMobile ? 500 : 'auto' }}>
+          <div style={{ minWidth: isMobile ? 480 : 'auto' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 4, paddingBottom: 8, borderBottom: '1px solid #F1F5F9' }}>
-              <div style={{ width: isMobile ? 100 : 170, fontSize: 11, fontWeight: 600, color: '#94A3B8', flexShrink: 0 }}>Habit</div>
-              <div style={{ display: 'flex', gap: 4, flex: 1 }}>
+              <div style={{ width: isMobile ? 90 : 160, fontSize: 11, fontWeight: 600, color: '#94A3B8', flexShrink: 0 }}>Habit</div>
+              <div style={{ display: 'flex', gap: 3, flex: 1 }}>
                 {weekDates.map((d, i) => (
                   <div key={i} style={{ flex: 1, textAlign: 'center' }}>
-                    <p style={{ fontSize: isMobile ? 8 : 10, fontWeight: 600, color: d.date === today ? GREEN : '#94A3B8', margin: 0 }}>{d.label}</p>
+                    <p style={{ fontSize: isMobile ? 7 : 9, fontWeight: 600, color: d.date === today ? GREEN : (isFuture(d.date) ? '#CBD5E1' : '#94A3B8'), margin: 0 }}>{d.label}</p>
                   </div>
                 ))}
               </div>
-              <div style={{ width: isMobile ? 40 : 90, fontSize: 11, fontWeight: 600, color: '#94A3B8', textAlign: 'right', flexShrink: 0 }}>%</div>
+              <div style={{ width: isMobile ? 56 : 90, fontSize: 11, fontWeight: 600, color: '#94A3B8', textAlign: 'right', flexShrink: 0 }}>%</div>
             </div>
 
             <AnimatePresence>
               {habits.map((habit, hi) => {
-                const prog = getProgress(habit)
+                const halfProg = getHabitHalfProgress(habit)
+                const monthProg = getHabitMonthProgress(habit)
                 return (
                   <motion.div key={habit.id}
                     initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                    style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '10px 0', borderBottom: '1px solid #F8FAFC' }}>
-                    <div style={{ width: isMobile ? 100 : 170, display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-                      <span style={{ fontSize: 14 }}>{HABIT_ICONS[hi % HABIT_ICONS.length]}</span>
-                      <span style={{ fontSize: isMobile ? 10 : 12, fontWeight: 600, color: '#0F172A', flex: 1 }}>{habit.name}</span>
+                    style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '8px 0', borderBottom: '1px solid #F8FAFC' }}>
+                    <div style={{ width: isMobile ? 90 : 160, display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0 }}>
+                      <span style={{ fontSize: 13 }}>{HABIT_ICONS[hi % HABIT_ICONS.length]}</span>
+                      <span style={{ fontSize: isMobile ? 9 : 11, fontWeight: 600, color: '#0F172A', flex: 1 }}>{habit.name}</span>
                       <button onClick={() => deleteHabit(habit.id)}
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 11, opacity: 0.35, padding: 0, flexShrink: 0 }}>🗑</button>
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: '#6B7280', padding: 0, flexShrink: 0 }}>🗑</button>
                     </div>
-                    <div style={{ display: 'flex', gap: 4, flex: 1 }}>
-                      {weekDates.map((day) => (
-                        <div key={day.date} style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-                          <button onClick={() => toggleHabit(habit.id, day.date)}
-                            style={{ width: isMobile ? 16 : 18, height: isMobile ? 16 : 18, borderRadius: 4, border: `2px solid ${isDone(habit, day.date) ? GREEN : '#CBD5E1'}`, background: isDone(habit, day.date) ? GREEN : 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            {isDone(habit, day.date) && <span style={{ color: YELLOW, fontSize: 8, fontWeight: 700 }}>✓</span>}
-                          </button>
-                        </div>
-                      ))}
+                    <div style={{ display: 'flex', gap: 3, flex: 1 }}>
+                      {weekDates.map((day) => {
+                        const future = isFuture(day.date)
+                        return (
+                          <div key={day.date} style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+                            {/* CHANGE 6: Future dates shown as disabled */}
+                            <button
+                              onClick={() => !future && toggleHabit(habit.id, day.date)}
+                              disabled={future}
+                              title={future ? 'Cannot mark future dates' : ''}
+                              style={{
+                                width: isMobile ? 14 : 17, height: isMobile ? 14 : 17, borderRadius: 3,
+                                border: `2px solid ${future ? '#E2E8F0' : (isDone(habit, day.date) ? GREEN : '#CBD5E1')}`,
+                                background: future ? '#F8FAFC' : (isDone(habit, day.date) ? GREEN : 'transparent'),
+                                cursor: future ? 'not-allowed' : 'pointer',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                opacity: future ? 0.4 : 1
+                              }}>
+                              {!future && isDone(habit, day.date) && <span style={{ color: YELLOW, fontSize: 7, fontWeight: 700 }}>✓</span>}
+                            </button>
+                          </div>
+                        )
+                      })}
                     </div>
-                    <div style={{ width: isMobile ? 40 : 90, display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
+                    <div style={{ width: isMobile ? 56 : 90, display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0, justifyContent: 'flex-end' }}>
                       {!isMobile && (
                         <div style={{ flex: 1, height: 3, background: GREEN_LIGHT, borderRadius: 99 }}>
-                          <div style={{ height: 3, width: `${prog}%`, background: GREEN, borderRadius: 99, transition: 'width 0.5s' }} />
+                          <div style={{ height: 3, width: `${halfProg}%`, background: GREEN, borderRadius: 99, transition: 'width 0.5s' }} />
                         </div>
                       )}
-                      <span style={{ fontSize: 10, fontWeight: 700, color: GREEN, minWidth: 26 }}>{prog}%</span>
+                      <span style={{ fontSize: 9, fontWeight: 700, color: GREEN }}>{halfProg}%</span>
+                      <MiniCircle percent={monthProg} />
                     </div>
                   </motion.div>
                 )
