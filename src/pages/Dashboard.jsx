@@ -6,13 +6,21 @@ import HabitTracker from './HabitTracker'
 import Finance from './Finance'
 import Journal from './Journal'
 
+const GREEN = '#285E2C'
+const YELLOW = '#FFE67C'
+
+const navItems = [
+  { icon: '⊞', label: 'Habit Tracker', path: '/habits' },
+  { icon: '◫', label: 'Finance', path: '/finance' },
+  { icon: '☰', label: 'Notes', path: '/journal' },
+]
+
 export default function Dashboard() {
   const [user, setUser] = useState(null)
   const [expanded, setExpanded] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
-  
-  // Mobile detection
+
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 768)
@@ -33,7 +41,7 @@ export default function Dashboard() {
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: YELLOW }}>
 
-      {/* Desktop Sidebar — sirf desktop pe dikhao */}
+      {/* Desktop Sidebar */}
       {!isMobile && (
         <motion.div
           onMouseEnter={() => setExpanded(true)}
@@ -153,7 +161,6 @@ export default function Dashboard() {
               </button>
             )
           })}
-          {/* Logout button mobile */}
           <button onClick={handleLogout}
             style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, background: 'transparent', border: 'none', cursor: 'pointer', padding: '4px 20px', opacity: 0.6 }}>
             <span style={{ fontSize: 22 }}>🚪</span>
