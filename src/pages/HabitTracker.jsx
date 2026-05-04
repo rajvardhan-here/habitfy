@@ -152,13 +152,18 @@ export default function HabitTracker({ user: propUser, onLogout }) {
     setTasks(data || [])
   }
 
-  const addHabit = async () => {
-    if (!newHabit.trim() || !user) return
-    const { data, error } = await supabase.from('habits').insert({ user_id: user.id, name: newHabit, color: GREEN }).select()
-    if (error) { console.error('addHabit error', error); return }
-    setHabits(prev => [...prev, { ...data[0], habit_logs: [] }])
-    setNewHabit('')
-  }
+const addHabit = async () => {
+  if (!newHabit.trim() || !user) return
+  
+  const { data, error } = await supabase
+    .from('habits')
+    .insert({ user_id: user.id, name: newHabit, color: GREEN })
+    .select()  // yeh theek hai, bas policy fix honi chahiye
+  
+  if (error) { console.error('addHabit error', error); return }
+  setHabits(prev => [...prev, { ...data[0], habit_logs: [] }])
+  setNewHabit('')
+}
 
   const deleteHabit = async (habitId) => {
     if (!confirm('Delete this habit and all its logs?')) return

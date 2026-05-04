@@ -32,9 +32,8 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={!session ? <Login /> : <Navigate to="/habits" replace />} />
-        {/* CHANGE 1: / and /finance both redirect to /habits when logged in */}
         <Route path="/" element={session ? <Navigate to="/habits" replace /> : <Navigate to="/login" replace />} />
-        <Route path="/finance" element={session ? <Navigate to="/habits" replace /> : <Navigate to="/login" replace />} />
+        {/* ✅ YAHA SE HATAO woh /finance redirect wali line */}
         <Route path="/*" element={session ? <Dashboard /> : <Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
