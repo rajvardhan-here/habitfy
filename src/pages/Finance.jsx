@@ -78,7 +78,7 @@ export default function Finance() {
     } else {
       await supabase.from('budgets').insert({
         user_id: user.id,
-        date: selectedMonth + '-01',
+        month: selectedMonth,
         amount: parseFloat(newBudget)
       })
     }
