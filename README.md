@@ -100,7 +100,7 @@ VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173) in your browser.
+Open ( http://localhost:5173 ) in your browser.
 
 ### 5. Build for production
 
