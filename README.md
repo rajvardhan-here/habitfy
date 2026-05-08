@@ -117,7 +117,7 @@ This project is deployed on **Vercel**.
 To deploy your own instance:
 
 1. Fork this repository
-2. Import it into [Vercel](https://vercel.com)
+2. Import it into [Vercel] (https://vercel.com)
 3. Add your environment variables in Vercel → Project Settings → Environment Variables
 4. Deploy!
 
