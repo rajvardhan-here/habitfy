@@ -7,9 +7,9 @@ const GREEN_LIGHT = '#E8F5E9'
 const YELLOW = '#FFE67C'
 
 const QUOTES = [
-  "Paisa bachana ek kala hai, kharch karna aadat. 💸",
-  "Budget banana boring hai, broke hona aur zyada. 😅",
-  "Chhota kharch, bada sapna. ✨",
+  "LIKH LE LOIKH LE, HISAB LIKH LE betee 💸",
+  "uske par jo kharch kiya h , vo bhi likh lena ",
+  "Chhota paisa , mota paisa . ✨",
   "Jo aaj bachaya, kal khaengaa haan merii jaan . 🏦",
   "Pocket mein chhed ho toh sikko se phele rishte gir jate h. 🕳️",
 ]
