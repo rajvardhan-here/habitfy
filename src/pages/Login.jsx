@@ -207,7 +207,7 @@ export default function Login() {
           </span>
         </motion.button>
 
-        <p style={{ fontSize: 10, marginTop: 16, color: 'rgba(255,230,124,0.35)', margin: '16px 0 0 0' }}>
+        <p style={{ fontSize: 11, marginTop: 16, color: 'rgba(255,230,124,0.35)', margin: '16px 0 0 0' }}>
           Free forever · No credit card needed
         </p>
       </motion.div>
