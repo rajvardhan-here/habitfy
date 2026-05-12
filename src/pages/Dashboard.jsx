@@ -87,7 +87,7 @@ export default function Dashboard() {
                   <AnimatePresence>
                     {expanded && (
                       <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                        style={{ fontSize: 13, fontWeight: 600, color: active ? YELLOW : 'rgba(255,230,124,0.7)' }}>
+                        style={{ fontSize: 13, fontWeight: 601, color: active ? YELLOW : 'rgba(255,230,124,0.7)' }}>
                         {item.label}
                       </motion.span>
                     )}
