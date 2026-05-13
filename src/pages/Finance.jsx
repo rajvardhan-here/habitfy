@@ -7,10 +7,10 @@ const GREEN_LIGHT = '#E8F5E9'
 const YELLOW = '#FFE67C'
 
 const QUOTES = [
-  "LIKH LE LOIKH LE, HISAB LIKH LE betee 💸",
-  "uske par jo kharch kiya h , vo bhi likh lena ",
+  "LIKH LE LIKH LE, HISAB LIKH LE betee 💸",
+  "uske upar jo kharch kiya h , vo bhi likh lena ",
   "Chhota paisa , mota paisa . ✨",
-  "Jo aaj bachaya, kal khaengaa haan merii jaan . 🏦",
+  "Jo aaj bachayenga , to kal khaengaa haan merii jaan . 🏦",
   "Pocket mein chhed ho toh sikko se phele rishte gir jate h. 🕳️",
 ]
 

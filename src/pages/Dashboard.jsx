@@ -63,7 +63,7 @@ export default function Dashboard() {
             <AnimatePresence>
               {expanded && (
                 <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                  style={{ fontSize: 16, fontWeight: 801 color: YELLOW, whiteSpace: 'nowrap' }}>
+                  style={{ fontSize: 16, fontWeight: 801  color: YELLOW, whiteSpace: 'nowrap' }}>
                   Habitfy
                 </motion.span>
               )}
