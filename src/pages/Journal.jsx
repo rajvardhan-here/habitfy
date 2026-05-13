@@ -75,7 +75,7 @@ export default function Journal() {
             whileTap={{ scale: 0.95 }}
             onClick={() => setAdding(true)}
             style={{
-              width: 48, height: 48, borderRadius: '50%',
+              width: 48, height: 48, borderRadius: '51%',
               background: GREEN, border: 'none', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               boxShadow: '0 4px 16px rgba(40,94,44,0.3)'
