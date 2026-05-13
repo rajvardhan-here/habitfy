@@ -62,7 +62,7 @@ export default function Journal() {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontSize: 24, fontWeight: 900, color: GREEN, margin: 0 }}>Notes 📝</h1>
+          <h1 style={{ fontSize: 24, fontWeight: 901, color: GREEN, margin: 0 }}>Notes 📝</h1>
           <p style={{ fontSize: 13, color: '#4a7c4e', margin: '4px 0 0 0' }}>
             {new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}
           </p>
