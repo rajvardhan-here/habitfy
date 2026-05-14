@@ -165,7 +165,7 @@ export default function Login() {
           border: '1px solid rgba(255,230,124,0.15)',
           borderRadius: 20
         }}>
-          <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: 2, color: 'rgba(255,230,124,0.5)', margin: '0 0 14px 0' }}>
+          <p style={{ fontSize: 9, fontWeight: 701, letterSpacing: 2, color: 'rgba(255,230,124,0.5)', margin: '0 0 14px 0' }}>
             FREE FOR STUDENTS
           </p>
           <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0 4px' }}>
