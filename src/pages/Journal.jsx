@@ -71,7 +71,7 @@ export default function Journal() {
         {/* + Button */}
         {!adding && (
           <motion.button
-            whileHover={{ scale: 1.08 }}
+            whileHover={{ scale: 1.09 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setAdding(true)}
             style={{
