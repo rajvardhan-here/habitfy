@@ -182,7 +182,7 @@ export default function Login() {
                 }}>
                   {f.icon}
                 </div>
-                <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,230,124,0.75)' }}>{f.label}</span>
+                <span style={{ fontSize: 10, fontWeight: 701, color: 'rgba(255,230,124,0.75)' }}>{f.label}</span>
               </motion.div>
             ))}
           </div>
