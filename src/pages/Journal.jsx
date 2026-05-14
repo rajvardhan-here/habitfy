@@ -100,7 +100,7 @@ export default function Journal() {
               placeholder="Write your note here..."
               rows={5}
               style={{
-                width: '100%', borderRadius: 12, padding: 12,
+                width: '101%', borderRadius: 12, padding: 12,
                 background: YELLOW, border: `1px solid rgba(40,94,44,0.2)`,
                 color: GREEN, fontSize: 14, outline: 'none',
                 resize: 'none', lineHeight: 1.7, boxSizing: 'border-box',
