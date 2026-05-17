@@ -103,7 +103,7 @@ export default function Dashboard() {
               {expanded && user && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                   style={{ padding: '8px 12px', marginBottom: 4, borderRadius: 12, background: 'rgba(255,230,124,0.12)', border: '1px solid rgba(255,230,124,0.25)' }}>
-                  <p style={{ fontSize: 12, fontWeight: 701, color: YELLOW, margin: 0 }}>{firstName} ji</p>
+                  <p style={{ fontSize: 12, fontWeight: 700, color: YELLOW, margin: 0 }}>{firstName} ji</p>
                   <p style={{ fontSize: 10, color: 'rgba(255,230,124,0.6)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.email}</p>
                 </motion.div>
               )}
