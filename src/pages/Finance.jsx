@@ -9,7 +9,7 @@ const YELLOW = '#FFE67C'
 const QUOTES = [
   "LIKH LE LIKH LE, HISAB LIKH LE betee 💸",
   "uske upar jo kharch kiya h , vo bhi likh lena ",
-  "Chhota paisa , mota paisa . ✨",
+  "Chhota paisa , mota paisa , paisa hi paisa . ✨",
   "Jo aaj bachayenga , to kal khaengaa haan merii jaan . 🏦",
   "Pocket mein chhed ho toh sikko se phele rishte gir jate h. 🕳️",
 ]
