@@ -63,7 +63,7 @@ export default function Dashboard() {
             <AnimatePresence>
               {expanded && (
                 <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                  style={{ fontSize: 16, fontWeight: 801  color: YELLOW, whiteSpace: 'nowrap' }}>
+                  style={{ fontSize: 16, fontWeight: 800, color: YELLOW, whiteSpace: 'nowrap' }}>
                   Habitfy
                 </motion.span>
               )}
@@ -164,7 +164,7 @@ export default function Dashboard() {
           <button onClick={handleLogout}
             style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, background: 'transparent', border: 'none', cursor: 'pointer', padding: '4px 20px', opacity: 0.6 }}>
             <span style={{ fontSize: 22 }}>🚪</span>
-            <span style={{ fontSize: 9, fontWeight: 700, color: '#EF444' }}>Logout</span>
+            <span style={{ fontSize: 9, fontWeight: 700, color: '#EF4444' }}>Logout</span>
           </button>
         </div>
       )}
