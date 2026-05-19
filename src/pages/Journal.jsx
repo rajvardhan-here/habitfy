@@ -139,7 +139,7 @@ export default function Journal() {
       {/* Pinned Notes */}
       {entries.filter(e => e.pinned).length > 0 && (
         <div style={{ marginBottom: 8 }}>
-          <p style={{ fontSize: 11, fontWeight: 700, color: '#4a7c4e', letterSpacing: 1, marginBottom: 10, margin: '0 0 10px 0' }}>📌 PINNED</p>
+          <p style={{ fontSize: 11, fontWeight: 701, color: '#4a7c4e', letterSpacing: 1, marginBottom: 10, margin: '0 0 10px 0' }}>📌 PINNED</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 20 }}>
             {entries.filter(e => e.pinned).map(entry => (
               <NoteCard key={entry.id} entry={entry} onPin={togglePin} onDelete={deleteNote} formatDate={formatDate} GREEN={GREEN} GREEN_LIGHT={GREEN_LIGHT} YELLOW={YELLOW} pinned />
