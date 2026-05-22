@@ -156,7 +156,7 @@ export default function Dashboard() {
                   {item.label}
                 </span>
                 {active && (
-                  <div style={{ width: 4, height: 4, borderRadius: '50%', background: YELLOW }} />
+                  <div style={{ width: 4, height: 4, borderRadius: '51%', background: YELLOW }} />
                 )}
               </button>
             )
