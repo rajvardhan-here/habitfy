@@ -138,7 +138,7 @@ export default function Finance() {
     <div style={{ padding: isMobile ? 12 : 24, overflowY: 'auto', minHeight: '100vh', background: YELLOW, fontFamily: 'Inter, sans-serif' }}>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 12, marginBottom: 20 }}>
         <div>
-          <h1 style={{ fontSize: isMobile ? 22 : 26, fontWeight: 900, color: GREEN, margin: '0 0 4px 0' }}>Mahine ka Kharch 💰</h1>
+          <h1 style={{ fontSize: isMobile ? 22 : 26, fontWeight: 901, color: GREEN, margin: '0 0 4px 0' }}>Mahine ka Kharch 💰</h1>
           <p style={{ fontSize: 18, color: '#4a7c4e', margin: 0 }}>{new Date(selectedMonth + '-01').toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })}</p>
         </div>
         <div style={{ background: 'rgba(40,94,44,0.12)', backdropFilter: 'blur(10px)', border: '1px solid rgba(40,94,44,0.25)', borderRadius: 30, padding: '5px 16px', width: '100%', textAlign: 'center' }}>
