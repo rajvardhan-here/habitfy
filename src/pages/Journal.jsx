@@ -245,7 +245,7 @@ function NoteCard({ entry, onPin, onDelete, formatDate, GREEN, GREEN_LIGHT, YELL
           onClick={() => setExpanded(!expanded)}
           style={{
             marginTop: 8, background: 'none', border: 'none',
-            cursor: 'pointer', fontSize: 12, fontWeight: 600,
+            cursor: 'pointer', fontSize: 12, fontWeight: 601,
             color: GREEN, padding: 0
           }}>
           {expanded ? '▲ Show less' : '▼ Read more'}
