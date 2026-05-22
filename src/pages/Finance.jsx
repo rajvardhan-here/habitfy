@@ -130,7 +130,7 @@ export default function Finance() {
     amount: monthExpenses.filter(e => e.category === cat).reduce((sum, e) => sum + e.amount, 0)
   })).filter(c => c.amount > 0)
 
-  const isMobile = window.innerWidth < 769
+  const isMobile = window.innerWidth < 768
   const C = { background: 'white', borderRadius: 20, boxShadow: '0 2px 20px rgba(40,94,44,0.08)' }
   const inputStyle = { background: YELLOW, border: `1px solid rgba(40,94,44,0.15)`, color: GREEN, borderRadius: 12, padding: '8px 12px', fontSize: 13, outline: 'none', width: '100%', boxSizing: 'border-box' }
 
