@@ -494,7 +494,7 @@ export default function HabitTracker({ user: propUser, onLogout }) {
               placeholder="Add habit and press Enter..."
               style={{ flex: 1, borderRadius: 12, padding: '8px 14px', outline: 'none', background: '#F8F0FF', border: `1px solid ${PURPLE_LIGHT}`, color: DARK, fontSize: 12 }} />
             <button onClick={addHabit}
-              style={{ padding: '8px 20px', borderRadius: 12, background: `linear-gradient(135deg, ${PINK}, ${PURPLE})`, color: 'white', fontWeight: 700, fontSize: 12, border: 'none', cursor: 'pointer' }}>Add</button>
+              style={{ padding: '8px 20px', borderRadius: 12, background: `linear-gradient(135deg, ${PINK}, ${PURPLE})`, color: 'white', fontWeight: 700, fontSize: 13, border: 'none', cursor: 'pointer' }}>Add</button>
           </div>
 
           {habits.length === 0 && (
