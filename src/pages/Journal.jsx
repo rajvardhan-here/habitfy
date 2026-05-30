@@ -2,9 +2,13 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { motion, AnimatePresence } from 'framer-motion'
 
-const GREEN = '#285E2C'
-const GREEN_LIGHT = '#E8F5E9'
-const YELLOW = '#FFE67C'
+// ✅ NEW COLOUR PALETTE
+const PINK        = '#E91E8C'
+const PINK_LIGHT  = '#FCE7F3'
+const PURPLE      = '#7C3AED'
+const PURPLE_LIGHT= '#EDE9FE'
+const BG          = '#F3F0FF'
+const DARK        = '#1E1B4B'
 
 export default function Journal() {
   const [entries, setEntries] = useState([])
@@ -28,12 +32,7 @@ export default function Journal() {
   const saveNote = async () => {
     if (!newContent.trim() || !user) return
     setSaving(true)
-    await supabase.from('journal').insert({
-      user_id: user.id,
-      date: new Date().toISOString().split('T')[0],
-      content: newContent,
-      pinned: false
-    })
+    await supabase.from('journal').insert({ user_id: user.id, date: new Date().toISOString().split('T')[0], content: newContent, pinned: false })
     setNewContent('')
     setAdding(false)
     setSaving(false)
@@ -54,33 +53,31 @@ export default function Journal() {
     return new Date(dateStr).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })
   }
 
-  const C = { background: 'white', borderRadius: 20, boxShadow: '0 2px 20px rgba(40,94,44,0.08)' }
-
   return (
-    <div style={{ padding: 24, minHeight: '100vh', background: YELLOW, fontFamily: "'Inter', sans-serif" }}>
+    <div style={{ padding: 24, minHeight: '100vh', background: BG, fontFamily: "'Inter', sans-serif" }}>
 
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontSize: 24, fontWeight: 901, color: GREEN, margin: 0 }}>Notes 📝</h1>
-          <p style={{ fontSize: 13, color: '#4a7c4e', margin: '4px 0 0 0' }}>
+          <h1 style={{ fontSize: 24, fontWeight: 900, color: DARK, margin: 0 }}>Notes 📝</h1>
+          <p style={{ fontSize: 13, color: PURPLE, margin: '4px 0 0 0' }}>
             {new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}
           </p>
         </div>
 
-        {/* + Button */}
         {!adding && (
           <motion.button
             whileHover={{ scale: 1.09 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setAdding(true)}
             style={{
-              width: 48, height: 48, borderRadius: '51%',
-              background: GREEN, border: 'none', cursor: 'pointer',
+              width: 48, height: 48, borderRadius: '50%',
+              background: `linear-gradient(135deg, ${PINK}, ${PURPLE})`,
+              border: 'none', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 4px 16px rgba(40,94,44,0.3)'
+              boxShadow: `0 4px 16px rgba(233,30,140,0.35)`
             }}>
-            <span style={{ fontSize: 28, color: YELLOW, lineHeight: 1, marginTop: -2 }}>+</span>
+            <span style={{ fontSize: 28, color: 'white', lineHeight: 1, marginTop: -2 }}>+</span>
           </motion.button>
         )}
       </div>
@@ -92,7 +89,7 @@ export default function Journal() {
             initial={{ opacity: 0, y: -16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -16 }}
-            style={{ ...C, padding: 20, marginBottom: 20, border: `2px solid ${GREEN}` }}>
+            style={{ background: 'white', borderRadius: 20, boxShadow: '0 2px 20px rgba(124,58,237,0.12)', padding: 20, marginBottom: 20, border: `2px solid ${PINK}` }}>
             <textarea
               autoFocus
               value={newContent}
@@ -101,33 +98,25 @@ export default function Journal() {
               rows={5}
               style={{
                 width: '101%', borderRadius: 12, padding: 12,
-                background: YELLOW, border: `1px solid rgba(40,94,44,0.2)`,
-                color: GREEN, fontSize: 14, outline: 'none',
+                background: PURPLE_LIGHT, border: `1px solid rgba(124,58,237,0.2)`,
+                color: DARK, fontSize: 14, outline: 'none',
                 resize: 'none', lineHeight: 1.7, boxSizing: 'border-box',
                 fontFamily: "'Inter', sans-serif"
               }}
             />
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12 }}>
-              <span style={{ fontSize: 11, color: '#4a7c4e' }}>{newContent.length} characters</span>
+              <span style={{ fontSize: 11, color: PURPLE }}>{newContent.length} characters</span>
               <div style={{ display: 'flex', gap: 8 }}>
                 <button
                   onClick={() => { setAdding(false); setNewContent('') }}
-                  style={{
-                    padding: '8px 16px', borderRadius: 12, fontSize: 13,
-                    fontWeight: 600, background: GREEN_LIGHT, color: GREEN,
-                    border: 'none', cursor: 'pointer'
-                  }}>
+                  style={{ padding: '8px 16px', borderRadius: 12, fontSize: 13, fontWeight: 600, background: PURPLE_LIGHT, color: PURPLE, border: 'none', cursor: 'pointer' }}>
                   Cancel
                 </button>
                 <motion.button
                   whileHover={{ scale: 1.04 }}
                   whileTap={{ scale: 0.96 }}
                   onClick={saveNote}
-                  style={{
-                    padding: '8px 20px', borderRadius: 12, fontSize: 13,
-                    fontWeight: 700, background: GREEN, color: YELLOW,
-                    border: 'none', cursor: 'pointer'
-                  }}>
+                  style={{ padding: '8px 20px', borderRadius: 12, fontSize: 13, fontWeight: 700, background: `linear-gradient(135deg, ${PINK}, ${PURPLE})`, color: 'white', border: 'none', cursor: 'pointer' }}>
                   {saving ? '✓ Saving...' : 'Save Note'}
                 </motion.button>
               </div>
@@ -139,10 +128,11 @@ export default function Journal() {
       {/* Pinned Notes */}
       {entries.filter(e => e.pinned).length > 0 && (
         <div style={{ marginBottom: 8 }}>
-          <p style={{ fontSize: 11, fontWeight: 700, color: '#4a7c4e', letterSpacing: 1, marginBottom: 10, margin: '0 0 10px 0' }}>📌 PINNED</p>
+          <p style={{ fontSize: 11, fontWeight: 700, color: PURPLE, letterSpacing: 1, margin: '0 0 10px 0' }}>📌 PINNED</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 11, marginBottom: 21 }}>
             {entries.filter(e => e.pinned).map(entry => (
-              <NoteCard key={entry.id} entry={entry} onPin={togglePin} onDelete={deleteNote} formatDate={formatDate} GREEN={GREEN} GREEN_LIGHT={GREEN_LIGHT} YELLOW={YELLOW} pinned />
+              <NoteCard key={entry.id} entry={entry} onPin={togglePin} onDelete={deleteNote} formatDate={formatDate}
+                PINK={PINK} PINK_LIGHT={PINK_LIGHT} PURPLE={PURPLE} PURPLE_LIGHT={PURPLE_LIGHT} DARK={DARK} pinned />
             ))}
           </div>
         </div>
@@ -152,11 +142,12 @@ export default function Journal() {
       {entries.filter(e => !e.pinned).length > 0 && (
         <div>
           {entries.filter(e => e.pinned).length > 0 &&
-            <p style={{ fontSize: 11, fontWeight: 700, color: '#4a7c4e', letterSpacing: 1, margin: '0 0 10px 0' }}>🗒 ALL NOTES</p>
+            <p style={{ fontSize: 11, fontWeight: 700, color: PURPLE, letterSpacing: 1, margin: '0 0 10px 0' }}>🗒 ALL NOTES</p>
           }
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {entries.filter(e => !e.pinned).map(entry => (
-              <NoteCard key={entry.id} entry={entry} onPin={togglePin} onDelete={deleteNote} formatDate={formatDate} GREEN={GREEN} GREEN_LIGHT={GREEN_LIGHT} YELLOW={YELLOW} />
+              <NoteCard key={entry.id} entry={entry} onPin={togglePin} onDelete={deleteNote} formatDate={formatDate}
+                PINK={PINK} PINK_LIGHT={PINK_LIGHT} PURPLE={PURPLE} PURPLE_LIGHT={PURPLE_LIGHT} DARK={DARK} />
             ))}
           </div>
         </div>
@@ -164,20 +155,17 @@ export default function Journal() {
 
       {/* Empty state */}
       {entries.length === 0 && !adding && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          style={{ textAlign: 'center', paddingTop: 80 }}>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ textAlign: 'center', paddingTop: 80 }}>
           <p style={{ fontSize: 48, marginBottom: 12 }}>📝</p>
-          <p style={{ fontSize: 16, fontWeight: 700, color: GREEN, margin: 0 }}>No notes yet</p>
-          <p style={{ fontSize: 13, color: '#4a7c4e', marginTop: 6 }}>Tap + to write your first note</p>
+          <p style={{ fontSize: 16, fontWeight: 700, color: DARK, margin: 0 }}>No notes yet</p>
+          <p style={{ fontSize: 13, color: PURPLE, marginTop: 6 }}>Tap + to write your first note</p>
         </motion.div>
       )}
     </div>
   )
 }
 
-function NoteCard({ entry, onPin, onDelete, formatDate, GREEN, GREEN_LIGHT, YELLOW, pinned }) {
+function NoteCard({ entry, onPin, onDelete, formatDate, PINK, PINK_LIGHT, PURPLE, PURPLE_LIGHT, DARK, pinned }) {
   const [expanded, setExpanded] = useState(false)
   const isLong = entry.content.length > 200
 
@@ -191,30 +179,28 @@ function NoteCard({ entry, onPin, onDelete, formatDate, GREEN, GREEN_LIGHT, YELL
         borderRadius: 20,
         padding: 20,
         boxShadow: pinned
-          ? `0 4px 24px rgba(40,94,44,0.15), 0 0 0 2px ${GREEN}`
-          : '0 2px 20px rgba(40,94,44,0.08)',
-        border: pinned ? `2px solid ${GREEN}` : '2px solid transparent'
+          ? `0 4px 24px rgba(233,30,140,0.15), 0 0 0 2px ${PINK}`
+          : '0 2px 20px rgba(124,58,237,0.08)',
+        border: pinned ? `2px solid ${PINK}` : '2px solid transparent'
       }}>
 
       {/* Top row */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 10 }}>
-        <span style={{ fontSize: 11, fontWeight: 600, color: '#4a7c4e', background: GREEN_LIGHT, padding: '3px 10px', borderRadius: 20 }}>
+        <span style={{ fontSize: 11, fontWeight: 600, color: PURPLE, background: PURPLE_LIGHT, padding: '3px 10px', borderRadius: 20 }}>
           {formatDate(entry.date)}
         </span>
         <div style={{ display: 'flex', gap: 6 }}>
-          {/* Pin button */}
           <button
             onClick={() => onPin(entry)}
             title={entry.pinned ? 'Unpin' : 'Pin'}
             style={{
               width: 30, height: 30, borderRadius: '50%',
-              background: entry.pinned ? GREEN : GREEN_LIGHT,
+              background: entry.pinned ? `linear-gradient(135deg, ${PINK}, ${PURPLE})` : PURPLE_LIGHT,
               border: 'none', cursor: 'pointer', fontSize: 14,
               display: 'flex', alignItems: 'center', justifyContent: 'center'
             }}>
             📌
           </button>
-          {/* Delete button */}
           <button
             onClick={() => onDelete(entry.id)}
             style={{
@@ -229,25 +215,18 @@ function NoteCard({ entry, onPin, onDelete, formatDate, GREEN, GREEN_LIGHT, YELL
 
       {/* Content */}
       <p style={{
-        fontSize: 14, color: '#1a3a1c', lineHeight: 1.75, margin: 0,
-        whiteSpace: 'pre-wrap',
-        overflow: 'hidden',
-        display: '-webkit-box',
-        WebkitBoxOrient: 'vertical',
+        fontSize: 14, color: DARK, lineHeight: 1.75, margin: 0,
+        whiteSpace: 'pre-wrap', overflow: 'hidden',
+        display: '-webkit-box', WebkitBoxOrient: 'vertical',
         WebkitLineClamp: expanded ? 'unset' : 4
       }}>
         {entry.content}
       </p>
 
-      {/* Expand toggle */}
       {isLong && (
         <button
           onClick={() => setExpanded(!expanded)}
-          style={{
-            marginTop: 8, background: 'none', border: 'none',
-            cursor: 'pointer', fontSize: 12, fontWeight: 601,
-            color: GREEN, padding: 0
-          }}>
+          style={{ marginTop: 8, background: 'none', border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: 600, color: PINK, padding: 0 }}>
           {expanded ? '▲ Show less' : '▼ Read more'}
         </button>
       )}

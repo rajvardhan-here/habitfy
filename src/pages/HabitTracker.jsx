@@ -6,9 +6,16 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianG
 const HABIT_ICONS = ['💪', '📚', '💻', '✍️', '🧘', '🎯', '🏃', '🎨', '🎵', '💡']
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-const GREEN = '#285E2C'
-const GREEN_LIGHT = '#E8F5E9'
-const YELLOW = '#FFE67C'
+
+// ✅ NEW COLOUR PALETTE
+const PINK        = '#E91E8C'
+const PINK_LIGHT  = '#FCE7F3'
+const PURPLE      = '#7C3AED'
+const PURPLE_LIGHT= '#EDE9FE'
+const AMBER       = '#F59E0B'
+const BG          = '#F3F0FF'
+const DARK        = '#1E1B4B'
+const TEAL        = '#0EA5E9'
 
 function WaterBowl({ percent }) {
   const isOverflow = percent >= 95
@@ -20,29 +27,29 @@ function WaterBowl({ percent }) {
           <defs>
             <clipPath id="bowlClip"><ellipse cx="55" cy="58" rx="46" ry="46" /></clipPath>
             <linearGradient id="waterGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#4CAF50" stopOpacity={0.8} />
-              <stop offset="100%" stopColor={GREEN} stopOpacity={1} />
+              <stop offset="0%" stopColor={PINK} stopOpacity={0.8} />
+              <stop offset="100%" stopColor={PURPLE} stopOpacity={1} />
             </linearGradient>
           </defs>
-          <ellipse cx="55" cy="58" rx="46" ry="46" fill={GREEN_LIGHT} stroke={GREEN} strokeWidth="2.5" />
+          <ellipse cx="55" cy="58" rx="46" ry="46" fill={PURPLE_LIGHT} stroke={PURPLE} strokeWidth="2.5" />
           <g clipPath="url(#bowlClip)">
             <rect x="0" y={12 + waveY * 0.88} width="110" height="110" fill="url(#waterGrad)" opacity="0.85" />
             <motion.path d={`M-10,${12 + waveY * 0.88} C15,${12 + waveY * 0.88 - 7} 40,${12 + waveY * 0.88 + 7} 65,${12 + waveY * 0.88} C90,${12 + waveY * 0.88 - 7} 110,${12 + waveY * 0.88 + 5} 130,${12 + waveY * 0.88} L130,110 L-10,110 Z`}
-              fill={GREEN} opacity={0.5} animate={{ x: [0, -50, 0] }} transition={{ duration: 2, repeat: Infinity, ease: 'linear' }} />
+              fill={PINK} opacity={0.5} animate={{ x: [0, -50, 0] }} transition={{ duration: 2, repeat: Infinity, ease: 'linear' }} />
             <motion.path d={`M-10,${12 + waveY * 0.88 + 4} C20,${12 + waveY * 0.88 - 4} 45,${12 + waveY * 0.88 + 9} 70,${12 + waveY * 0.88 + 3} C95,${12 + waveY * 0.88 - 5} 115,${12 + waveY * 0.88 + 7} 130,${12 + waveY * 0.88} L130,110 L-10,110 Z`}
-              fill="#4CAF50" opacity={0.3} animate={{ x: [0, 50, 0] }} transition={{ duration: 2.5, repeat: Infinity, ease: 'linear' }} />
+              fill={PURPLE} opacity={0.3} animate={{ x: [0, 50, 0] }} transition={{ duration: 2.5, repeat: Infinity, ease: 'linear' }} />
           </g>
-          <ellipse cx="55" cy="58" rx="46" ry="46" fill="none" stroke={GREEN} strokeWidth="2.5" />
-          <ellipse cx="55" cy="13" rx="46" ry="9" fill={GREEN_LIGHT} stroke={GREEN} strokeWidth="2" />
-          <ellipse cx="55" cy="13" rx="38" ry="6" fill="white" stroke={GREEN} strokeWidth="1.5" opacity="0.8" />
-          <text x="55" y="60" textAnchor="middle" style={{ fontSize: 17, fontWeight: 900, fill: percent > 50 ? 'white' : GREEN }}>{percent}%</text>
+          <ellipse cx="55" cy="58" rx="46" ry="46" fill="none" stroke={PURPLE} strokeWidth="2.5" />
+          <ellipse cx="55" cy="13" rx="46" ry="9" fill={PURPLE_LIGHT} stroke={PURPLE} strokeWidth="2" />
+          <ellipse cx="55" cy="13" rx="38" ry="6" fill="white" stroke={PURPLE} strokeWidth="1.5" opacity="0.8" />
+          <text x="55" y="60" textAnchor="middle" style={{ fontSize: 17, fontWeight: 900, fill: percent > 50 ? 'white' : DARK }}>{percent}%</text>
           <text x="55" y="74" textAnchor="middle" style={{ fontSize: 8, fill: percent > 50 ? 'rgba(255,255,255,0.8)' : '#94A3B8' }}>this month</text>
         </svg>
         {isOverflow && (
           <>
-            <motion.div style={{ position: 'absolute', top: 2, left: 32, width: 7, height: 14, borderRadius: '50%', background: GREEN, opacity: 0.8 }}
+            <motion.div style={{ position: 'absolute', top: 2, left: 32, width: 7, height: 14, borderRadius: '50%', background: PINK, opacity: 0.8 }}
               animate={{ y: [0, -8, 0], scaleY: [1, 1.3, 1] }} transition={{ duration: 1.0, repeat: Infinity }} />
-            <motion.div style={{ position: 'absolute', top: 0, left: 52, width: 6, height: 12, borderRadius: '50%', background: '#4CAF50', opacity: 0.7 }}
+            <motion.div style={{ position: 'absolute', top: 0, left: 52, width: 6, height: 12, borderRadius: '50%', background: PURPLE, opacity: 0.7 }}
               animate={{ y: [0, -10, 0], scaleY: [1, 1.4, 1] }} transition={{ duration: 1.3, repeat: Infinity, delay: 0.4 }} />
           </>
         )}
@@ -56,8 +63,8 @@ function MiniCircle({ percent }) {
   const offset = circ - (percent / 100) * circ
   return (
     <svg width={22} height={22} style={{ flexShrink: 0 }}>
-      <circle cx={11} cy={11} r={r} fill="none" stroke={GREEN_LIGHT} strokeWidth={3} />
-      <circle cx={11} cy={11} r={r} fill="none" stroke={GREEN} strokeWidth={3}
+      <circle cx={11} cy={11} r={r} fill="none" stroke={PURPLE_LIGHT} strokeWidth={3} />
+      <circle cx={11} cy={11} r={r} fill="none" stroke={PINK} strokeWidth={3}
         strokeDasharray={circ} strokeDashoffset={offset} strokeLinecap="round"
         transform="rotate(-90 11 11)" style={{ transition: 'stroke-dashoffset 0.8s ease' }} />
     </svg>
@@ -74,11 +81,11 @@ function StreakPill({ streak }) {
       <div style={{
         display: 'flex', alignItems: 'center', gap: 6,
         padding: '6px 16px', borderRadius: 20,
-        background: 'white', boxShadow: '0 2px 10px rgba(0,0,0,0.08)',
+        background: 'white', boxShadow: '0 2px 10px rgba(124,58,237,0.15)',
         cursor: 'default', userSelect: 'none'
       }}>
         <span style={{ fontSize: 13 }}>🔥</span>
-        <span style={{ fontWeight: 700, color: GREEN, fontSize: 12 }}>Streak</span>
+        <span style={{ fontWeight: 700, color: PURPLE, fontSize: 12 }}>Streak</span>
         <div style={{ width: 1, height: 14, background: '#E2E8F0' }} />
         <span style={{ fontWeight: 800, color: '#e85d04', fontSize: 13 }}>{streak}d</span>
       </div>
@@ -91,12 +98,12 @@ function StreakPill({ streak }) {
             transition={{ duration: 0.18 }}
             style={{
               position: 'absolute', top: 46, left: '50%', transform: 'translateX(-50%)',
-              background: GREEN, color: YELLOW, borderRadius: 14, padding: '12px 16px',
+              background: DARK, color: 'white', borderRadius: 14, padding: '12px 16px',
               fontSize: 11.5, fontWeight: 600, lineHeight: 1.7,
-              zIndex: 200, boxShadow: '0 8px 24px rgba(40,94,44,0.35)',
+              zIndex: 200, boxShadow: `0 8px 24px rgba(30,27,75,0.35)`,
               width: 230, textAlign: 'center'
             }}>
-            <div style={{ position: 'absolute', top: -6, left: '50%', transform: 'translateX(-50%)', width: 0, height: 0, borderLeft: '6px solid transparent', borderRight: '6px solid transparent', borderBottom: `6px solid ${GREEN}` }} />
+            <div style={{ position: 'absolute', top: -6, left: '50%', transform: 'translateX(-50%)', width: 0, height: 0, borderLeft: '6px solid transparent', borderRight: '6px solid transparent', borderBottom: `6px solid ${DARK}` }} />
             ⚠️ <strong>Streak sirf tabhi badhti hai</strong> jab aap <em>roz aake</em> us din ke task tick karo.<br />
             Ek saath purane saare din tick karne se streak <strong>nahi badhti!</strong> 🙅‍♂️<br />
             <span style={{ opacity: 0.75, fontSize: 10.5 }}>Roz aana padega bhai — consistency hi game hai 💪</span>
@@ -194,7 +201,7 @@ export default function HabitTracker({ user: propUser, onLogout }) {
     if (!newHabit.trim()) return
     const cu = await getCurrentUser()
     if (!cu) return
-    const { data, error } = await supabase.from('habits').insert({ user_id: cu.id, name: newHabit, color: GREEN }).select()
+    const { data, error } = await supabase.from('habits').insert({ user_id: cu.id, name: newHabit, color: PINK }).select()
     if (error) { console.error('addHabit error', error); return }
     setHabits(prev => [...prev, { ...data[0], habit_logs: [] }])
     setNewHabit('')
@@ -254,7 +261,6 @@ export default function HabitTracker({ user: propUser, onLogout }) {
     return Math.round((weekDates.filter(d => isDone(habit, d.date)).length / weekDates.length) * 100)
   }
 
-  // ✅ Bowl = selected month (changes with month picker)
   const selectedMonthProgress = habits.length > 0
     ? Math.round(monthDays.reduce((sum, day) => {
         const done = habits.filter(h => isDone(h, day.fullDate)).length
@@ -269,10 +275,12 @@ export default function HabitTracker({ user: propUser, onLogout }) {
 
   const firstName = user?.user_metadata?.name?.split(' ')[0] || 'there'
   const avatarLetter = firstName[0].toUpperCase()
-  const C = { background: 'white', borderRadius: 20, boxShadow: '0 2px 20px rgba(40,94,44,0.10)' }
+
+  // Card style
+  const C = { background: 'white', borderRadius: 20, boxShadow: '0 2px 20px rgba(124,58,237,0.10)' }
 
   return (
-    <div style={{ minHeight: '100vh', background: YELLOW, fontFamily: 'Inter, sans-serif', overflowY: 'auto' }}>
+    <div style={{ minHeight: '100vh', background: BG, fontFamily: 'Inter, sans-serif', overflowY: 'auto' }}>
       {celebrate && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 50, pointerEvents: 'none' }}>
           {[...Array(20)].map((_, i) => (
@@ -290,29 +298,29 @@ export default function HabitTracker({ user: propUser, onLogout }) {
         {/* HEADER */}
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10, marginBottom: 20 }}>
           <div>
-            <h1 style={{ fontSize: isMobile ? 22 : 30, fontWeight: 900, color: '#0F172A', lineHeight: 1.2, margin: 0 }}>
-              Hello <span style={{ color: GREEN }}>{firstName} ji,</span>
+            <h1 style={{ fontSize: isMobile ? 22 : 30, fontWeight: 900, color: DARK, lineHeight: 1.2, margin: 0 }}>
+              Hello <span style={{ color: PINK }}>{firstName} ji,</span>
             </h1>
-            <p style={{ fontSize: isMobile ? 13 : 16, fontStyle: 'italic', color: '#1a3a1c', fontFamily: 'Georgia, serif', marginTop: 4, marginBottom: 0 }}>
+            <p style={{ fontSize: isMobile ? 13 : 16, fontStyle: 'italic', color: PURPLE, fontFamily: 'Georgia, serif', marginTop: 4, marginBottom: 0 }}>
               Stay consistent, don't fool yourself.
             </p>
-            <div style={{ height: 2, width: isMobile ? 180 : 300, background: `linear-gradient(90deg, ${GREEN}, transparent)`, marginTop: 5, borderRadius: 2 }} />
+            <div style={{ height: 2, width: isMobile ? 180 : 300, background: `linear-gradient(90deg, ${PINK}, ${PURPLE}, transparent)`, marginTop: 5, borderRadius: 2 }} />
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
             <StreakPill streak={streak} />
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 20, background: 'white', boxShadow: '0 2px 10px rgba(0,0,0,0.08)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 20, background: 'white', boxShadow: '0 2px 10px rgba(124,58,237,0.1)' }}>
               <span style={{ fontSize: 12 }}>📅</span>
-              <span style={{ fontWeight: 600, color: '#334155', fontSize: 11 }}>{todayLabel}</span>
+              <span style={{ fontWeight: 600, color: DARK, fontSize: 11 }}>{todayLabel}</span>
             </div>
             <div style={{ position: 'relative' }}>
               <button onClick={() => setShowUserMenu(!showUserMenu)}
-                style={{ width: 38, height: 38, borderRadius: '50%', background: GREEN, border: 'none', cursor: 'pointer', color: YELLOW, fontWeight: 700, fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                style={{ width: 38, height: 38, borderRadius: '50%', background: `linear-gradient(135deg, ${PINK}, ${PURPLE})`, border: 'none', cursor: 'pointer', color: 'white', fontWeight: 700, fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {avatarLetter}
               </button>
               {showUserMenu && (
-                <div style={{ position: 'absolute', right: 0, top: 46, borderRadius: 12, padding: 8, background: 'white', boxShadow: '0 8px 30px rgba(0,0,0,0.12)', minWidth: 160, zIndex: 50 }}>
-                  <p style={{ padding: '4px 12px', fontSize: 12, fontWeight: 700, color: '#0F172A', margin: 0 }}>{firstName} ji</p>
+                <div style={{ position: 'absolute', right: 0, top: 46, borderRadius: 12, padding: 8, background: 'white', boxShadow: '0 8px 30px rgba(124,58,237,0.15)', minWidth: 160, zIndex: 50 }}>
+                  <p style={{ padding: '4px 12px', fontSize: 12, fontWeight: 700, color: DARK, margin: 0 }}>{firstName} ji</p>
                   <p style={{ padding: '0 12px 4px', fontSize: 11, color: '#94A3B8', margin: 0 }}>{user?.email}</p>
                   <button onClick={onLogout} style={{ width: '100%', textAlign: 'left', padding: '8px 12px', borderRadius: 8, fontSize: 13, fontWeight: 500, color: '#EF4444', background: 'none', border: 'none', cursor: 'pointer' }}>🚪 Logout</button>
                 </div>
@@ -328,19 +336,19 @@ export default function HabitTracker({ user: propUser, onLogout }) {
           <div style={{ ...C, padding: 14, height: isMobile ? 200 : 220, display: 'flex', flexDirection: 'column' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6, flexShrink: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <h3 style={{ fontWeight: 700, fontSize: 13, color: '#0F172A', margin: 0 }}>Progress</h3>
-                <span style={{ fontSize: 11, fontWeight: 600, color: GREEN }}>{MONTHS[selectedMonth]}</span>
+                <h3 style={{ fontWeight: 700, fontSize: 13, color: DARK, margin: 0 }}>Progress</h3>
+                <span style={{ fontSize: 11, fontWeight: 600, color: PINK }}>{MONTHS[selectedMonth]}</span>
               </div>
               <div style={{ position: 'relative' }}>
                 <button onClick={() => setShowMonthPicker(!showMonthPicker)}
-                  style={{ fontSize: 10, fontWeight: 500, color: GREEN, background: GREEN_LIGHT, padding: '3px 10px', borderRadius: 20, border: 'none', cursor: 'pointer' }}>
+                  style={{ fontSize: 10, fontWeight: 500, color: PURPLE, background: PURPLE_LIGHT, padding: '3px 10px', borderRadius: 20, border: 'none', cursor: 'pointer' }}>
                   {MONTHS[selectedMonth].slice(0, 3)} {selectedYear} ▾
                 </button>
                 {showMonthPicker && (
-                  <div style={{ position: 'absolute', right: 0, top: 28, background: 'white', borderRadius: 12, boxShadow: '0 8px 30px rgba(0,0,0,0.12)', padding: 8, zIndex: 50, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 4, minWidth: 190 }}>
+                  <div style={{ position: 'absolute', right: 0, top: 28, background: 'white', borderRadius: 12, boxShadow: '0 8px 30px rgba(124,58,237,0.15)', padding: 8, zIndex: 50, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 4, minWidth: 190 }}>
                     {MONTHS.map((m, i) => (
                       <button key={i} onClick={() => { setSelectedMonth(i); setShowMonthPicker(false) }}
-                        style={{ padding: '5px 6px', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 10, fontWeight: 600, background: selectedMonth === i ? GREEN : 'transparent', color: selectedMonth === i ? YELLOW : '#334155' }}>
+                        style={{ padding: '5px 6px', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 10, fontWeight: 600, background: selectedMonth === i ? PURPLE : 'transparent', color: selectedMonth === i ? 'white' : DARK }}>
                         {m.slice(0, 3)}
                       </button>
                     ))}
@@ -352,44 +360,44 @@ export default function HabitTracker({ user: propUser, onLogout }) {
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chartData} margin={{ top: 5, right: 5, left: -25, bottom: 0 }}>
                   <defs>
-                    <linearGradient id="greenGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={GREEN} stopOpacity={0.2} />
-                      <stop offset="95%" stopColor={GREEN} stopOpacity={0} />
+                    <linearGradient id="pinkGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor={PINK} stopOpacity={0.25} />
+                      <stop offset="95%" stopColor={PURPLE} stopOpacity={0.05} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
                   <XAxis dataKey="date" tick={{ fontSize: 8, fill: '#94A3B8' }} axisLine={false} tickLine={false} interval={1} />
                   <YAxis tick={{ fontSize: 8, fill: '#94A3B8' }} axisLine={false} tickLine={false} tickFormatter={v => `${v}%`} domain={[0, 100]} ticks={[0, 50, 100]} />
-                  <Tooltip contentStyle={{ borderRadius: 10, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)', fontSize: 10 }}
-                    formatter={v => [`${v}%`, 'Progress']} labelFormatter={l => `${MONTHS[selectedMonth]} ${l}`} labelStyle={{ fontWeight: 700, color: '#0F172A' }} />
-                  <Area type="monotone" dataKey="productivity" stroke={GREEN} strokeWidth={2} fill="url(#greenGrad)"
-                    dot={false} activeDot={{ r: 4, fill: YELLOW, stroke: GREEN, strokeWidth: 2 }} />
+                  <Tooltip contentStyle={{ borderRadius: 10, border: 'none', boxShadow: '0 4px 20px rgba(124,58,237,0.15)', fontSize: 10 }}
+                    formatter={v => [`${v}%`, 'Progress']} labelFormatter={l => `${MONTHS[selectedMonth]} ${l}`} labelStyle={{ fontWeight: 700, color: DARK }} />
+                  <Area type="monotone" dataKey="productivity" stroke={PINK} strokeWidth={2} fill="url(#pinkGrad)"
+                    dot={false} activeDot={{ r: 4, fill: AMBER, stroke: PINK, strokeWidth: 2 }} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
           </div>
 
-          {/* ✅ Bowl — selected month */}
+          {/* Bowl */}
           <div style={{ ...C, padding: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: isMobile ? 'auto' : 220 }}>
-            <p style={{ fontWeight: 700, fontSize: 11, color: '#0F172A', margin: '0 0 2px 0', alignSelf: 'flex-start' }}>Overall</p>
+            <p style={{ fontWeight: 700, fontSize: 11, color: DARK, margin: '0 0 2px 0', alignSelf: 'flex-start' }}>Overall</p>
             <p style={{ fontSize: 9, color: '#94A3B8', margin: '0 0 4px 0', alignSelf: 'flex-start' }}>{MONTHS[selectedMonth]} {selectedYear}</p>
             <WaterBowl percent={selectedMonthProgress} />
           </div>
 
           {/* Tasks */}
           <div style={{ ...C, padding: 14, height: isMobile ? 'auto' : 220, display: 'flex', flexDirection: 'column' }}>
-            <p style={{ fontWeight: 700, fontSize: 12, color: '#0F172A', margin: '0 0 8px 0', flexShrink: 0 }}>⚡ Extra Task of the Day</p>
+            <p style={{ fontWeight: 700, fontSize: 12, color: DARK, margin: '0 0 8px 0', flexShrink: 0 }}>⚡ Extra Task of the Day</p>
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6, overflowY: 'auto' }}>
               <AnimatePresence>
                 {tasks.map((task) => (
                   <motion.div key={task.id} initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
                     style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                     <button onClick={() => toggleTask(task)}
-                      style={{ width: 18, height: 18, borderRadius: 4, border: `2px solid ${task.done ? GREEN : '#CBD5E1'}`, background: task.done ? GREEN : 'transparent', cursor: 'pointer', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      {task.done && <span style={{ color: YELLOW, fontSize: 8, fontWeight: 700 }}>✓</span>}
+                      style={{ width: 18, height: 18, borderRadius: 4, border: `2px solid ${task.done ? PINK : '#CBD5E1'}`, background: task.done ? PINK : 'transparent', cursor: 'pointer', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      {task.done && <span style={{ color: 'white', fontSize: 8, fontWeight: 700 }}>✓</span>}
                     </button>
                     <input value={task.title} onChange={e => updateTaskTitle(task, e.target.value)} placeholder="Enter task..."
-                      style={{ flex: 1, outline: 'none', background: 'transparent', border: 'none', fontSize: 11, color: task.done ? '#94A3B8' : '#0F172A', textDecoration: task.done ? 'line-through' : 'none' }} />
+                      style={{ flex: 1, outline: 'none', background: 'transparent', border: 'none', fontSize: 11, color: task.done ? '#94A3B8' : DARK, textDecoration: task.done ? 'line-through' : 'none' }} />
                     <button onClick={() => deleteTask(task.id)}
                       style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: '#9CA3AF', flexShrink: 0, padding: 0 }}>🗑</button>
                   </motion.div>
@@ -398,8 +406,8 @@ export default function HabitTracker({ user: propUser, onLogout }) {
             </div>
             <div style={{ flexShrink: 0, marginTop: 8 }}>
               <button onClick={addTask}
-                style={{ width: '100%', height: tasks.length === 0 ? 90 : 36, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 10, border: `2px dashed ${GREEN}`, background: 'transparent', cursor: 'pointer' }}>
-                <span style={{ fontSize: 22, color: GREEN }}>+</span>
+                style={{ width: '100%', height: tasks.length === 0 ? 90 : 36, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 10, border: `2px dashed ${PINK}`, background: 'transparent', cursor: 'pointer' }}>
+                <span style={{ fontSize: 22, color: PINK }}>+</span>
               </button>
               <p style={{ fontSize: 9, color: '#94A3B8', textAlign: 'center', marginTop: 4, marginBottom: 0 }}>Today only · removed tomorrow</p>
             </div>
@@ -409,12 +417,12 @@ export default function HabitTracker({ user: propUser, onLogout }) {
         {/* HABIT TABLE */}
         <div style={{ ...C, padding: isMobile ? 12 : 16, overflowX: 'auto' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-            <h3 style={{ fontWeight: 700, fontSize: 15, color: '#0F172A', margin: 0 }}>Habit Tracker</h3>
+            <h3 style={{ fontWeight: 700, fontSize: 15, color: DARK, margin: 0 }}>Habit Tracker</h3>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <button onClick={() => setHalfOffset(0)}
-                style={{ padding: '4px 10px', borderRadius: 20, border: 'none', cursor: 'pointer', fontSize: 10, fontWeight: 600, background: halfOffset === 0 ? GREEN : GREEN_LIGHT, color: halfOffset === 0 ? YELLOW : GREEN }}>1–15</button>
+                style={{ padding: '4px 10px', borderRadius: 20, border: 'none', cursor: 'pointer', fontSize: 10, fontWeight: 600, background: halfOffset === 0 ? PURPLE : PURPLE_LIGHT, color: halfOffset === 0 ? 'white' : PURPLE }}>1–15</button>
               <button onClick={() => setHalfOffset(1)}
-                style={{ padding: '4px 10px', borderRadius: 20, border: 'none', cursor: 'pointer', fontSize: 10, fontWeight: 600, background: halfOffset === 1 ? GREEN : GREEN_LIGHT, color: halfOffset === 1 ? YELLOW : GREEN }}>16–{daysInSelectedMonth}</button>
+                style={{ padding: '4px 10px', borderRadius: 20, border: 'none', cursor: 'pointer', fontSize: 10, fontWeight: 600, background: halfOffset === 1 ? PURPLE : PURPLE_LIGHT, color: halfOffset === 1 ? 'white' : PURPLE }}>16–{daysInSelectedMonth}</button>
             </div>
           </div>
 
@@ -424,7 +432,7 @@ export default function HabitTracker({ user: propUser, onLogout }) {
               <div style={{ display: 'flex', gap: 3, flex: 1 }}>
                 {weekDates.map((d, i) => (
                   <div key={i} style={{ flex: 1, textAlign: 'center' }}>
-                    <p style={{ fontSize: isMobile ? 7 : 9, fontWeight: 600, color: d.date === today ? GREEN : '#94A3B8', margin: 0 }}>{d.label}</p>
+                    <p style={{ fontSize: isMobile ? 7 : 9, fontWeight: 600, color: d.date === today ? PINK : '#94A3B8', margin: 0 }}>{d.label}</p>
                   </div>
                 ))}
               </div>
@@ -440,7 +448,7 @@ export default function HabitTracker({ user: propUser, onLogout }) {
                     style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '8px 0', borderBottom: '1px solid #F8FAFC' }}>
                     <div style={{ width: isMobile ? 90 : 160, display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0 }}>
                       <span style={{ fontSize: 13 }}>{HABIT_ICONS[hi % HABIT_ICONS.length]}</span>
-                      <span style={{ fontSize: isMobile ? 9 : 11, fontWeight: 600, color: '#0F172A', flex: 1 }}>{habit.name}</span>
+                      <span style={{ fontSize: isMobile ? 9 : 11, fontWeight: 600, color: DARK, flex: 1 }}>{habit.name}</span>
                       <button onClick={() => deleteHabit(habit.id)}
                         style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: '#6B7280', padding: 0, flexShrink: 0 }}>🗑</button>
                     </div>
@@ -453,13 +461,13 @@ export default function HabitTracker({ user: propUser, onLogout }) {
                             <button onClick={() => toggleHabit(habit.id, day.date)}
                               style={{
                                 width: isMobile ? 14 : 17, height: isMobile ? 14 : 17, borderRadius: 3,
-                                border: `2px solid ${done ? GREEN : (isToday ? GREEN : '#CBD5E1')}`,
-                                background: done ? GREEN : 'transparent', cursor: 'pointer',
+                                border: `2px solid ${done ? PINK : (isToday ? PURPLE : '#CBD5E1')}`,
+                                background: done ? `linear-gradient(135deg, ${PINK}, ${PURPLE})` : 'transparent', cursor: 'pointer',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                boxShadow: isToday && !done ? `0 0 0 2px ${YELLOW}` : 'none',
+                                boxShadow: isToday && !done ? `0 0 0 2px ${PINK_LIGHT}` : 'none',
                                 transition: 'all 0.15s'
                               }}>
-                              {done && <span style={{ color: YELLOW, fontSize: 7, fontWeight: 700 }}>✓</span>}
+                              {done && <span style={{ color: 'white', fontSize: 7, fontWeight: 700 }}>✓</span>}
                             </button>
                           </div>
                         )
@@ -467,11 +475,11 @@ export default function HabitTracker({ user: propUser, onLogout }) {
                     </div>
                     <div style={{ width: isMobile ? 56 : 90, display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0, justifyContent: 'flex-end' }}>
                       {!isMobile && (
-                        <div style={{ flex: 1, height: 3, background: GREEN_LIGHT, borderRadius: 99 }}>
-                          <div style={{ height: 3, width: `${halfProg}%`, background: GREEN, borderRadius: 99, transition: 'width 0.5s' }} />
+                        <div style={{ flex: 1, height: 3, background: PURPLE_LIGHT, borderRadius: 99 }}>
+                          <div style={{ height: 3, width: `${halfProg}%`, background: `linear-gradient(90deg, ${PINK}, ${PURPLE})`, borderRadius: 99, transition: 'width 0.5s' }} />
                         </div>
                       )}
-                      <span style={{ fontSize: 9, fontWeight: 700, color: GREEN }}>{halfProg}%</span>
+                      <span style={{ fontSize: 9, fontWeight: 700, color: PINK }}>{halfProg}%</span>
                       <MiniCircle percent={monthProg} />
                     </div>
                   </motion.div>
@@ -484,9 +492,9 @@ export default function HabitTracker({ user: propUser, onLogout }) {
             <input value={newHabit} onChange={e => setNewHabit(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && addHabit()}
               placeholder="Add habit and press Enter..."
-              style={{ flex: 1, borderRadius: 12, padding: '8px 14px', outline: 'none', background: '#F8FAFC', border: `1px solid ${GREEN_LIGHT}`, color: '#0F172A', fontSize: 12 }} />
+              style={{ flex: 1, borderRadius: 12, padding: '8px 14px', outline: 'none', background: '#F8F0FF', border: `1px solid ${PURPLE_LIGHT}`, color: DARK, fontSize: 12 }} />
             <button onClick={addHabit}
-              style={{ padding: '8px 20px', borderRadius: 12, background: GREEN, color: YELLOW, fontWeight: 700, fontSize: 12, border: 'none', cursor: 'pointer' }}>Add</button>
+              style={{ padding: '8px 20px', borderRadius: 12, background: `linear-gradient(135deg, ${PINK}, ${PURPLE})`, color: 'white', fontWeight: 700, fontSize: 12, border: 'none', cursor: 'pointer' }}>Add</button>
           </div>
 
           {habits.length === 0 && (

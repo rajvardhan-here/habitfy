@@ -6,8 +6,13 @@ import HabitTracker from './HabitTracker'
 import Finance from './Finance'
 import Journal from './Journal'
 
-const GREEN = '#285E2C'
-const YELLOW = '#FFE67C'
+// ✅ NEW COLOUR PALETTE (Lector-style pink/purple/amber)
+const PINK       = '#E91E8C'   // primary magenta-pink
+const PURPLE     = '#7C3AED'   // deep purple
+const AMBER      = '#F59E0B'   // warm amber/gold
+const BG         = '#F3F0FF'   // soft lavender background
+const DARK       = '#1E1B4B'   // deep indigo dark
+const PINK_LIGHT = '#FCE7F3'   // light pink tint
 
 const navItems = [
   { icon: '⊞', label: 'Habit Tracker', path: '/habits' },
@@ -39,7 +44,7 @@ export default function Dashboard() {
   const firstName = user?.user_metadata?.name?.split(' ')[0] || 'User'
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: YELLOW }}>
+    <div style={{ display: 'flex', minHeight: '100vh', background: BG }}>
 
       {/* Desktop Sidebar */}
       {!isMobile && (
@@ -49,21 +54,27 @@ export default function Dashboard() {
           animate={{ width: expanded ? 180 : 64 }}
           transition={{ duration: 0.2, ease: 'easeInOut' }}
           style={{
-            background: GREEN, boxShadow: '2px 0 16px rgba(40,94,44,0.25)',
-            borderRight: '1px solid rgba(40,94,44,0.3)',
+            background: `linear-gradient(180deg, ${DARK} 0%, ${PURPLE} 100%)`,
+            boxShadow: `4px 0 24px rgba(124,58,237,0.25)`,
+            borderRight: `1px solid rgba(233,30,140,0.2)`,
             display: 'flex', flexDirection: 'column', padding: '24px 0',
             zIndex: 50, position: 'fixed', top: 0, left: 0, height: '100vh', overflow: 'hidden'
           }}>
 
           {/* Logo */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 32, padding: '0 12px' }}>
-            <div style={{ width: 40, height: 40, borderRadius: 12, background: YELLOW, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <span style={{ color: GREEN, fontWeight: 900, fontSize: 18 }}>✦</span>
+            <div style={{
+              width: 40, height: 40, borderRadius: 12,
+              background: `linear-gradient(135deg, ${PINK}, ${AMBER})`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+              boxShadow: `0 4px 12px rgba(233,30,140,0.4)`
+            }}>
+              <span style={{ color: 'white', fontWeight: 900, fontSize: 18 }}>✦</span>
             </div>
             <AnimatePresence>
               {expanded && (
                 <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                  style={{ fontSize: 16, fontWeight: 800, color: YELLOW, whiteSpace: 'nowrap' }}>
+                  style={{ fontSize: 16, fontWeight: 800, color: 'white', whiteSpace: 'nowrap' }}>
                   Habitfy
                 </motion.span>
               )}
@@ -79,15 +90,15 @@ export default function Dashboard() {
                   style={{
                     display: 'flex', alignItems: 'center', gap: 12,
                     borderRadius: 12, padding: '10px 12px',
-                    background: active ? 'rgba(255,230,124,0.18)' : 'transparent',
-                    border: active ? '1px solid rgba(255,230,124,0.4)' : '1px solid transparent',
+                    background: active ? `rgba(233,30,140,0.25)` : 'transparent',
+                    border: active ? `1px solid rgba(233,30,140,0.5)` : '1px solid transparent',
                     cursor: 'pointer', whiteSpace: 'nowrap', textAlign: 'left'
                   }}>
-                  <span style={{ fontSize: 18, color: active ? YELLOW : 'rgba(255,230,124,0.6)', flexShrink: 0 }}>{item.icon}</span>
+                  <span style={{ fontSize: 18, color: active ? PINK : 'rgba(255,255,255,0.5)', flexShrink: 0 }}>{item.icon}</span>
                   <AnimatePresence>
                     {expanded && (
                       <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                        style={{ fontSize: 13, fontWeight: 600, color: active ? YELLOW : 'rgba(255,230,124,0.7)' }}>
+                        style={{ fontSize: 13, fontWeight: 600, color: active ? 'white' : 'rgba(255,255,255,0.6)' }}>
                         {item.label}
                       </motion.span>
                     )}
@@ -102,9 +113,9 @@ export default function Dashboard() {
             <AnimatePresence>
               {expanded && user && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                  style={{ padding: '8px 12px', marginBottom: 4, borderRadius: 12, background: 'rgba(255,230,124,0.12)', border: '1px solid rgba(255,230,124,0.25)' }}>
-                  <p style={{ fontSize: 12, fontWeight: 700, color: YELLOW, margin: 0 }}>{firstName} ji</p>
-                  <p style={{ fontSize: 10, color: 'rgba(255,230,124,0.6)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.email}</p>
+                  style={{ padding: '8px 12px', marginBottom: 4, borderRadius: 12, background: 'rgba(233,30,140,0.15)', border: '1px solid rgba(233,30,140,0.3)' }}>
+                  <p style={{ fontSize: 12, fontWeight: 700, color: 'white', margin: 0 }}>{firstName} ji</p>
+                  <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.email}</p>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -138,8 +149,9 @@ export default function Dashboard() {
       {isMobile && (
         <div style={{
           position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 100,
-          background: GREEN, display: 'flex', justifyContent: 'space-around',
-          padding: '8px 0 12px 0', boxShadow: '0 -4px 20px rgba(40,94,44,0.3)'
+          background: DARK,
+          display: 'flex', justifyContent: 'space-around',
+          padding: '8px 0 12px 0', boxShadow: `0 -4px 20px rgba(124,58,237,0.3)`
         }}>
           {navItems.map((item) => {
             const active = location.pathname === item.path
@@ -152,11 +164,11 @@ export default function Dashboard() {
                   opacity: active ? 1 : 0.6
                 }}>
                 <span style={{ fontSize: 22 }}>{item.icon}</span>
-                <span style={{ fontSize: 9, fontWeight: 700, color: active ? YELLOW : 'rgba(255,230,124,0.7)' }}>
+                <span style={{ fontSize: 9, fontWeight: 700, color: active ? PINK : 'rgba(255,255,255,0.6)' }}>
                   {item.label}
                 </span>
                 {active && (
-                  <div style={{ width: 4, height: 4, borderRadius: '51%', background: YELLOW }} />
+                  <div style={{ width: 4, height: 4, borderRadius: '50%', background: PINK }} />
                 )}
               </button>
             )
