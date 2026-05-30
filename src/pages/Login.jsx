@@ -214,7 +214,7 @@ export default function Login() {
       {/* Footer */}
       <motion.div whileHover={{ scale: 1.05 }}
         style={{ position: 'absolute', bottom: 20, opacity: 0.5 }}>
-        <span style={{ fontSize: 11, fontWeight: 799, color: 'white' }}>Made with 💜 by EFFORTS</span>
+        <span style={{ fontSize: 11, fontWeight: 700, color: 'white' }}>Made with 💜 by EFFORTS</span>
       </motion.div>
     </div>
   )
