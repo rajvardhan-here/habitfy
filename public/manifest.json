@@ -4,18 +4,18 @@
   "description": "Track habits, build streaks, live better",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#FFE67C",
-  "theme_color": "#285E2C",
+  "background_color": "#7C3AED",
+  "theme_color": "#7C3AED",
   "icons": [
     {
-      "src": "/hero.png",
+      "src": "/favicon.svg",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/svg+xml"
     },
     {
-      "src": "/hero.png",
+      "src": "/favicon.svg",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/svg+xml"
     }
   ]
 }
