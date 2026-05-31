@@ -117,18 +117,31 @@ function StreakPill({ streak, t }) {
 
 // ─── TopBar  (exported so Finance & Journal can import it) ───────────────────
 export function TopBar({ user, streak=0, onLogout, dark, onToggleDark }) {
-  const t = dark ? T.dark : T.light
-  const [menu, setMenu]     = useState(false)
-  const nowDate             = new Date()
-  const todayLabel          = `${DAYS[nowDate.getDay()]}, ${nowDate.getDate()} ${MONTHS[nowDate.getMonth()]}`
-  const firstName           = user?.user_metadata?.name?.split(' ')[0] || 'User'
-  const letter              = firstName[0]?.toUpperCase() || 'U'
+  const t         = dark ? T.dark : T.light
+  const [menu, setMenu] = useState(false)
+  const nowDate   = new Date()
+  const todayLabel= `${DAYS[nowDate.getDay()]}, ${nowDate.getDate()} ${MONTHS[nowDate.getMonth()]}`
+
+  // Safe user info — works even if user is null initially
+  const firstName = user?.user_metadata?.full_name?.split(' ')[0]
+                 || user?.user_metadata?.name?.split(' ')[0]
+                 || user?.email?.split('@')[0]
+                 || 'User'
+  const letter    = firstName[0]?.toUpperCase() || 'U'
+
+  // Close menu when clicking outside
+  useEffect(()=>{
+    if(!menu) return
+    const close = ()=>setMenu(false)
+    setTimeout(()=>window.addEventListener('click', close), 0)
+    return ()=>window.removeEventListener('click', close)
+  },[menu])
 
   return (
-    <div style={{display:'flex',alignItems:'center',justifyContent:'flex-end',
-      gap:8,flexWrap:'wrap',padding:'12px 20px 0 20px'}}>
+    /* No padding here — parent row controls spacing */
+    <div style={{display:'flex',alignItems:'center',gap:8,flexWrap:'wrap'}}>
 
-      {/* 🌙 / ☀️ — icon only, no text */}
+      {/* 🌙 / ☀️ */}
       <button onClick={onToggleDark}
         style={{width:36,height:36,borderRadius:'50%',border:'none',cursor:'pointer',fontSize:18,
           background:t.card,boxShadow:`0 2px 10px ${t.shadow}`,
@@ -146,28 +159,64 @@ export function TopBar({ user, streak=0, onLogout, dark, onToggleDark }) {
         <span style={{fontWeight:600,color:t.text,fontSize:11}}>{todayLabel}</span>
       </div>
 
-      {/* Avatar + dropdown */}
-      <div style={{position:'relative'}}>
-        <button onClick={()=>setMenu(!menu)}
+      {/* Avatar + dropdown — FIXED: stopPropagation so outside-click closes it */}
+      <div style={{position:'relative'}} onClick={e=>e.stopPropagation()}>
+        <button onClick={()=>setMenu(v=>!v)}
           style={{width:38,height:38,borderRadius:'50%',
             background:`linear-gradient(135deg,${t.pink},${t.purple})`,
             border:'none',cursor:'pointer',color:'white',fontWeight:700,fontSize:14,
-            display:'flex',alignItems:'center',justifyContent:'center'}}>
+            display:'flex',alignItems:'center',justifyContent:'center',
+            boxShadow:`0 4px 12px rgba(233,30,140,0.35)`}}>
           {letter}
         </button>
-        {menu&&(
-          <div style={{position:'absolute',right:0,top:46,borderRadius:12,padding:8,
-            background:t.card,boxShadow:`0 8px 30px ${t.shadow}`,minWidth:160,zIndex:50}}>
-            <p style={{padding:'4px 12px',fontSize:12,fontWeight:700,color:t.text,margin:0}}>{firstName} ji</p>
-            <p style={{padding:'0 12px 4px',fontSize:11,color:t.subtext,margin:0,
-              overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{user?.email}</p>
-            <button onClick={onLogout}
-              style={{width:'100%',textAlign:'left',padding:'8px 12px',borderRadius:8,
-                fontSize:13,fontWeight:500,color:'#EF4444',background:'none',border:'none',cursor:'pointer'}}>
-              🚪 Logout
-            </button>
-          </div>
-        )}
+        <AnimatePresence>
+          {menu&&(
+            <motion.div
+              initial={{opacity:0,y:8,scale:0.95}}
+              animate={{opacity:1,y:0,scale:1}}
+              exit={{opacity:0,y:8,scale:0.95}}
+              transition={{duration:0.15}}
+              style={{position:'absolute',right:0,top:46,borderRadius:16,padding:'8px 0',
+                background:t.card,boxShadow:`0 12px 40px ${t.shadow}, 0 0 0 1px ${t.border}`,
+                minWidth:200,zIndex:200}}>
+              {/* User info block */}
+              <div style={{padding:'10px 16px 10px 16px',
+                borderBottom:`1px solid ${t.border}`,marginBottom:4}}>
+                <div style={{display:'flex',alignItems:'center',gap:10}}>
+                  <div style={{width:36,height:36,borderRadius:'50%',flexShrink:0,
+                    background:`linear-gradient(135deg,${t.pink},${t.purple})`,
+                    display:'flex',alignItems:'center',justifyContent:'center',
+                    color:'white',fontWeight:700,fontSize:14}}>
+                    {letter}
+                  </div>
+                  <div style={{overflow:'hidden'}}>
+                    <p style={{fontSize:13,fontWeight:700,color:t.text,margin:0,
+                      whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>
+                      {firstName} ji 👋
+                    </p>
+                    <p style={{fontSize:11,color:t.subtext,margin:0,
+                      whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis',
+                      maxWidth:140}}>
+                      {user?.email || '—'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              {/* Logout */}
+              <button
+                onClick={()=>{setMenu(false); onLogout && onLogout()}}
+                style={{width:'100%',textAlign:'left',padding:'10px 16px',
+                  fontSize:13,fontWeight:600,color:'#EF4444',
+                  background:'none',border:'none',cursor:'pointer',
+                  display:'flex',alignItems:'center',gap:8,
+                  borderRadius:8, transition:'background 0.15s'}}
+                onMouseEnter={e=>e.currentTarget.style.background='#FEE2E2'}
+                onMouseLeave={e=>e.currentTarget.style.background='none'}>
+                🚪 Logout
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   )
@@ -347,45 +396,27 @@ export default function HabitTracker({ user: propUser, onLogout, dark, onToggleD
         </div>
       )}
 
-      {/* ── TopBar (🌙, streak, date, avatar) on THIS page too ── */}
-      <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',
-        flexWrap:'wrap',gap:10,padding:isMobile?12:20,paddingBottom:0}}>
+      {/* ── Header row: greeting LEFT, TopBar RIGHT — same line ── */}
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',
+        flexWrap:'wrap',gap:10,
+        padding: isMobile ? '12px 12px 0 12px' : '16px 24px 0 24px'}}>
+
+        {/* Left: greeting */}
         <div>
           <h1 style={{fontSize:isMobile?22:30,fontWeight:900,color:t.text,lineHeight:1.2,margin:0}}>
             Hello <span style={{color:t.pink}}>{firstName} ji,</span>
           </h1>
-          <p style={{fontSize:isMobile?13:16,fontStyle:'italic',color:t.purple,fontFamily:'Georgia,serif',marginTop:4,marginBottom:0}}>
+          <p style={{fontSize:isMobile?13:15,fontStyle:'italic',color:t.purple,
+            fontFamily:'Georgia,serif',marginTop:3,marginBottom:0}}>
             Stay consistent, don't fool yourself.
           </p>
-          <div style={{height:2,width:isMobile?180:300,background:`linear-gradient(90deg,${t.pink},${t.purple},transparent)`,marginTop:5,borderRadius:2}}/>
+          <div style={{height:2,width:isMobile?180:280,
+            background:`linear-gradient(90deg,${t.pink},${t.purple},transparent)`,
+            marginTop:5,borderRadius:2}}/>
         </div>
 
-        {/* ✅ TopBar inline here */}
-        <div style={{display:'flex',alignItems:'center',gap:8,flexWrap:'wrap'}}>
-          <button onClick={onToggleDark}
-            style={{width:36,height:36,borderRadius:'50%',border:'none',cursor:'pointer',fontSize:18,
-              background:t.card,boxShadow:`0 2px 10px ${t.shadow}`,
-              display:'flex',alignItems:'center',justifyContent:'center'}}>
-            {dark?'☀️':'🌙'}
-          </button>
-          <StreakPill streak={streak} t={t}/>
-          <div style={{display:'flex',alignItems:'center',gap:6,padding:'6px 12px',borderRadius:20,
-            background:t.card,boxShadow:`0 2px 10px ${t.shadow}`}}>
-            <span style={{fontSize:12}}>📅</span>
-            <span style={{fontWeight:600,color:t.text,fontSize:11}}>
-              {`${DAYS[new Date().getDay()]}, ${new Date().getDate()} ${MONTHS[new Date().getMonth()]}`}
-            </span>
-          </div>
-          <div style={{position:'relative'}}>
-            <button onClick={()=>{}}
-              style={{width:38,height:38,borderRadius:'50%',
-                background:`linear-gradient(135deg,${t.pink},${t.purple})`,
-                border:'none',cursor:'pointer',color:'white',fontWeight:700,fontSize:14,
-                display:'flex',alignItems:'center',justifyContent:'center'}}>
-              {(firstName[0]||'U').toUpperCase()}
-            </button>
-          </div>
-        </div>
+        {/* Right: reuse TopBar (moon, streak, date, working R avatar) */}
+        <TopBar user={user} streak={streak} onLogout={onLogout} dark={dark} onToggleDark={onToggleDark}/>
       </div>
 
       <div style={{padding:isMobile?12:20,paddingTop:16}}>

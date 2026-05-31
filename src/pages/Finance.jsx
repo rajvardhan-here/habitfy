@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts'
-import { TopBar } from './HabitTracker'   // ✅ shared TopBar
+import { TopBar } from './HabitTracker'
 
-// ─── Colour tokens ────────────────────────────────────────────────────────────
 const T = {
   light: {
     bg:'#F3F0FF', card:'#FFFFFF', text:'#1E1B4B', subtext:'#64748B',
@@ -43,7 +42,6 @@ export default function Finance({ user: propUser, onLogout, dark, onToggleDark }
   const [quoteVisible, setQuoteVisible]= useState(true)
   const [selectedMonth,setMonth]       = useState(new Date().toISOString().slice(0,7))
   const printRef = useRef()
-
   const categories = ['Food','Transport','Shopping','Entertainment','Health','Other']
 
   useEffect(()=>{
@@ -119,176 +117,187 @@ export default function Finance({ user: propUser, onLogout, dark, onToggleDark }
     borderRadius:12,padding:'8px 12px',fontSize:13,outline:'none',width:'100%',boxSizing:'border-box'}
 
   return (
-    <div style={{padding:isMobile?12:24,overflowY:'auto',minHeight:'100vh',
-      background:t.bg,fontFamily:'Inter,sans-serif',transition:'background 0.3s'}}>
+    <div style={{overflowY:'auto',minHeight:'100vh',background:t.bg,
+      fontFamily:'Inter,sans-serif',transition:'background 0.3s'}}>
 
-      {/* ✅ TopBar — moon/sun + streak + date + avatar */}
-      <TopBar user={user} streak={0} onLogout={onLogout} dark={dark} onToggleDark={onToggleDark}/>
+      {/* ── TOP ROW: Title left, TopBar right — same line ── */}
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',
+        padding: isMobile ? '12px 12px 0 12px' : '16px 24px 0 24px', flexWrap:'wrap', gap:8}}>
 
-      {/* Header */}
-      <div style={{display:'flex',flexDirection:'column',alignItems:'flex-start',gap:12,margin:'16px 0 20px 0'}}>
+        {/* Left: title + subtitle */}
         <div>
-          <h1 style={{fontSize:isMobile?22:26,fontWeight:900,color:t.text,margin:'0 0 4px 0'}}>Mahine ka Kharch 💰</h1>
-          <p style={{fontSize:18,color:t.purple,margin:0}}>
+          <h1 style={{fontSize:isMobile?20:24,fontWeight:900,color:t.text,margin:0,lineHeight:1.2}}>
+            Mahine ka Kharch 💰
+          </h1>
+          <p style={{fontSize:14,color:t.purple,margin:'2px 0 0 0'}}>
             {new Date(selectedMonth+'-01').toLocaleDateString('en-IN',{month:'long',year:'numeric'})}
           </p>
         </div>
+
+        {/* Right: TopBar (moon, streak, date, avatar) */}
+        <TopBar user={user} streak={0} onLogout={onLogout} dark={dark} onToggleDark={onToggleDark}/>
+      </div>
+
+      {/* Content */}
+      <div style={{padding:isMobile?12:24,paddingTop:16}}>
+
+        {/* Quote bar */}
         <div style={{background:`linear-gradient(135deg,${t.pinkLight},${t.purpleLight})`,
-          border:`1px solid ${t.border}`,borderRadius:30,padding:'5px 16px',width:'100%',textAlign:'center'}}>
-          <p style={{fontSize:17,color:t.purple,margin:0,fontStyle:'italic',
+          border:`1px solid ${t.border}`,borderRadius:30,padding:'6px 16px',marginBottom:20,textAlign:'center'}}>
+          <p style={{fontSize:15,color:t.purple,margin:0,fontStyle:'italic',
             opacity:quoteVisible?1:0,transition:'opacity 0.5s ease'}}>{QUOTES[quoteIndex]}</p>
         </div>
-      </div>
 
-      {/* Controls */}
-      <div style={{display:'flex',gap:10,marginBottom:20,alignItems:'center',flexWrap:'wrap'}}>
-        <input type="month" value={selectedMonth} onChange={e=>setMonth(e.target.value)}
-          style={{...inputStyle,width:'auto',cursor:'pointer'}}/>
-        <button onClick={handlePrint}
-          style={{padding:'8px 20px',borderRadius:12,
-            background:`linear-gradient(135deg,${t.pink},${t.purple})`,
-            color:'white',fontWeight:700,fontSize:13,border:'none',cursor:'pointer',
-            boxShadow:`0 4px 12px rgba(233,30,140,0.3)`}}>
-          🧾 Print Receipt
-        </button>
-      </div>
-
-      {/* Stats */}
-      <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr':'repeat(3,1fr)',gap:16,marginBottom:24}}>
-        {[
-          {label:'Monthly Budget',value:`₹${budget?.amount?.toLocaleString()||'—'}`,color:t.purple},
-          {label:'Total Spent',   value:`₹${totalSpent.toLocaleString()}`,          color:t.pink},
-          {label:isOver?'⚠️ Over Budget!':'Remaining',
-           value:`${isOver?'-':''}₹${Math.abs(remaining).toLocaleString()}`,
-           color:isOver?'#e74c3c':t.teal},
-        ].map((s,i)=>(
-          <div key={i} style={{...C,padding:16,borderLeft:`4px solid ${s.color}`}}>
-            <p style={{fontSize:11,color:t.subtext,margin:'0 0 4px 0',fontWeight:600}}>{s.label}</p>
-            <p style={{fontSize:22,fontWeight:900,color:s.color,margin:0}}>{s.value}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* Charts */}
-      <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr':'1fr 1fr',gap:20,marginBottom:20}}>
-        <div style={{...C,padding:16}}>
-          <h3 style={{fontSize:13,fontWeight:700,color:t.text,margin:'0 0 12px 0'}}>
-            Daily Spending — {new Date(selectedMonth+'-01').toLocaleDateString('en-IN',{month:'long'})}
-          </h3>
-          <ResponsiveContainer width="100%" height={160}>
-            <AreaChart data={chartData}>
-              <defs>
-                <linearGradient id="spendGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%"  stopColor={t.pink}   stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor={t.purple} stopOpacity={0.05}/>
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke={t.border} vertical={false}/>
-              <XAxis dataKey="date" tick={{fontSize:9,fill:t.subtext}} axisLine={false} tickLine={false} interval={4}/>
-              <YAxis tick={{fontSize:10,fill:t.subtext}} axisLine={false} tickLine={false}/>
-              <Tooltip formatter={v=>`₹${v}`}
-                contentStyle={{borderRadius:12,border:'none',boxShadow:`0 4px 20px ${t.shadow}`,background:t.card,color:t.text}}/>
-              <Area type="monotone" dataKey="amount" stroke={t.pink} strokeWidth={2.5} fill="url(#spendGrad)"
-                dot={false} activeDot={{r:5,fill:t.amber,stroke:t.pink,strokeWidth:2}}/>
-            </AreaChart>
-          </ResponsiveContainer>
+        {/* Controls */}
+        <div style={{display:'flex',gap:10,marginBottom:20,alignItems:'center',flexWrap:'wrap'}}>
+          <input type="month" value={selectedMonth} onChange={e=>setMonth(e.target.value)}
+            style={{...inputStyle,width:'auto',cursor:'pointer'}}/>
+          <button onClick={handlePrint}
+            style={{padding:'8px 20px',borderRadius:12,
+              background:`linear-gradient(135deg,${t.pink},${t.purple})`,
+              color:'white',fontWeight:700,fontSize:13,border:'none',cursor:'pointer',
+              boxShadow:`0 4px 12px rgba(233,30,140,0.3)`}}>
+            🧾 Print Receipt
+          </button>
         </div>
-        <div style={{...C,padding:16}}>
-          <h3 style={{fontSize:13,fontWeight:700,color:t.text,margin:'0 0 12px 0'}}>By Category</h3>
-          {categoryData.length===0?(
-            <p style={{color:t.subtext,fontSize:13,textAlign:'center',paddingTop:40}}>No expenses this month</p>
-          ):(
+
+        {/* Stats */}
+        <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr':'repeat(3,1fr)',gap:16,marginBottom:24}}>
+          {[
+            {label:'Monthly Budget',value:`₹${budget?.amount?.toLocaleString()||'—'}`,color:t.purple},
+            {label:'Total Spent',   value:`₹${totalSpent.toLocaleString()}`,          color:t.pink},
+            {label:isOver?'⚠️ Over Budget!':'Remaining',
+             value:`${isOver?'-':''}₹${Math.abs(remaining).toLocaleString()}`,
+             color:isOver?'#e74c3c':t.teal},
+          ].map((s,i)=>(
+            <div key={i} style={{...C,padding:16,borderLeft:`4px solid ${s.color}`}}>
+              <p style={{fontSize:11,color:t.subtext,margin:'0 0 4px 0',fontWeight:600}}>{s.label}</p>
+              <p style={{fontSize:22,fontWeight:900,color:s.color,margin:0}}>{s.value}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Charts */}
+        <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr':'1fr 1fr',gap:20,marginBottom:20}}>
+          <div style={{...C,padding:16}}>
+            <h3 style={{fontSize:13,fontWeight:700,color:t.text,margin:'0 0 12px 0'}}>
+              Daily Spending — {new Date(selectedMonth+'-01').toLocaleDateString('en-IN',{month:'long'})}
+            </h3>
             <ResponsiveContainer width="100%" height={160}>
-              <BarChart data={categoryData} layout="vertical">
-                <XAxis type="number" tick={{fontSize:11,fill:t.subtext}} axisLine={false} tickLine={false}/>
-                <YAxis dataKey="category" type="category" tick={{fontSize:11,fill:t.purple}} width={80} axisLine={false} tickLine={false}/>
+              <AreaChart data={chartData}>
+                <defs>
+                  <linearGradient id="spendGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%"  stopColor={t.pink}   stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor={t.purple} stopOpacity={0.05}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke={t.border} vertical={false}/>
+                <XAxis dataKey="date" tick={{fontSize:9,fill:t.subtext}} axisLine={false} tickLine={false} interval={4}/>
+                <YAxis tick={{fontSize:10,fill:t.subtext}} axisLine={false} tickLine={false}/>
                 <Tooltip formatter={v=>`₹${v}`}
                   contentStyle={{borderRadius:12,border:'none',background:t.card,color:t.text}}/>
-                <Bar dataKey="amount" fill={t.purple} radius={[0,6,6,0]}/>
-              </BarChart>
+                <Area type="monotone" dataKey="amount" stroke={t.pink} strokeWidth={2.5} fill="url(#spendGrad)"
+                  dot={false} activeDot={{r:5,fill:t.amber,stroke:t.pink,strokeWidth:2}}/>
+              </AreaChart>
             </ResponsiveContainer>
-          )}
-        </div>
-      </div>
-
-      {/* Budget + Expense form */}
-      <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr':'1fr 1fr',gap:20,marginBottom:20}}>
-        <div style={{...C,padding:16}}>
-          <h3 style={{fontSize:13,fontWeight:700,color:t.text,margin:'0 0 12px 0'}}>
-            {budget?'Update Budget':'Set Monthly Budget'}
-          </h3>
-          <div style={{display:'flex',gap:8}}>
-            <input value={newBudget} onChange={e=>setNewBudget(e.target.value)}
-              placeholder={budget?`Current: ₹${budget.amount}`:'Enter amount...'} type="number"
-              style={{...inputStyle,flex:1}}/>
-            <button onClick={saveBudget}
-              style={{padding:'8px 16px',borderRadius:12,fontSize:13,fontWeight:700,color:'white',
-                background:`linear-gradient(135deg,${t.purple},${t.pink})`,border:'none',cursor:'pointer'}}>
-              Save
-            </button>
           </div>
-          {budget&&(
-            <div style={{marginTop:12}}>
-              <div style={{width:'100%',borderRadius:99,height:8,background:t.purpleLight}}>
-                <div style={{height:8,borderRadius:99,transition:'width 0.5s',
-                  width:`${Math.min((totalSpent/budget.amount)*100,100)}%`,
-                  background:isOver?'#e74c3c':`linear-gradient(90deg,${t.purple},${t.pink})`}}/>
-              </div>
-              <p style={{fontSize:11,color:isOver?'#e74c3c':t.purple,margin:'4px 0 0 0',fontWeight:isOver?700:400}}>
-                {isOver?`⚠️ ${Math.round((totalSpent/budget.amount)*100)}% used — Over budget!`:`${Math.round((totalSpent/budget.amount)*100)}% used`}
-              </p>
-            </div>
-          )}
+          <div style={{...C,padding:16}}>
+            <h3 style={{fontSize:13,fontWeight:700,color:t.text,margin:'0 0 12px 0'}}>By Category</h3>
+            {categoryData.length===0?(
+              <p style={{color:t.subtext,fontSize:13,textAlign:'center',paddingTop:40}}>No expenses this month</p>
+            ):(
+              <ResponsiveContainer width="100%" height={160}>
+                <BarChart data={categoryData} layout="vertical">
+                  <XAxis type="number" tick={{fontSize:11,fill:t.subtext}} axisLine={false} tickLine={false}/>
+                  <YAxis dataKey="category" type="category" tick={{fontSize:11,fill:t.purple}} width={80} axisLine={false} tickLine={false}/>
+                  <Tooltip formatter={v=>`₹${v}`}
+                    contentStyle={{borderRadius:12,border:'none',background:t.card,color:t.text}}/>
+                  <Bar dataKey="amount" fill={t.purple} radius={[0,6,6,0]}/>
+                </BarChart>
+              </ResponsiveContainer>
+            )}
+          </div>
         </div>
-        <div style={{...C,padding:16}}>
-          <h3 style={{fontSize:13,fontWeight:700,color:t.text,margin:'0 0 12px 0'}}>Add Expense</h3>
-          <div style={{display:'flex',flexDirection:'column',gap:8}}>
-            <input value={form.description} onChange={e=>setForm({...form,description:e.target.value})}
-              placeholder="What did you spend on?" style={inputStyle}
-              onKeyDown={e=>e.key==='Enter'&&addExpense()}/>
+
+        {/* Budget + Expense form */}
+        <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr':'1fr 1fr',gap:20,marginBottom:20}}>
+          <div style={{...C,padding:16}}>
+            <h3 style={{fontSize:13,fontWeight:700,color:t.text,margin:'0 0 12px 0'}}>
+              {budget?'Update Budget':'Set Monthly Budget'}
+            </h3>
             <div style={{display:'flex',gap:8}}>
-              <select value={form.category} onChange={e=>setForm({...form,category:e.target.value})}
-                style={{...inputStyle,flex:1}}>
-                {categories.map(c=><option key={c}>{c}</option>)}
-              </select>
-              <input value={form.amount} onChange={e=>setForm({...form,amount:e.target.value})}
-                placeholder="₹" type="number" style={{...inputStyle,width:120}}
+              <input value={newBudget} onChange={e=>setNewBudget(e.target.value)}
+                placeholder={budget?`Current: ₹${budget.amount}`:'Enter amount...'} type="number"
+                style={{...inputStyle,flex:1}}/>
+              <button onClick={saveBudget}
+                style={{padding:'8px 16px',borderRadius:12,fontSize:13,fontWeight:700,color:'white',
+                  background:`linear-gradient(135deg,${t.purple},${t.pink})`,border:'none',cursor:'pointer'}}>
+                Save
+              </button>
+            </div>
+            {budget&&(
+              <div style={{marginTop:12}}>
+                <div style={{width:'100%',borderRadius:99,height:8,background:t.purpleLight}}>
+                  <div style={{height:8,borderRadius:99,transition:'width 0.5s',
+                    width:`${Math.min((totalSpent/budget.amount)*100,100)}%`,
+                    background:isOver?'#e74c3c':`linear-gradient(90deg,${t.purple},${t.pink})`}}/>
+                </div>
+                <p style={{fontSize:11,color:isOver?'#e74c3c':t.purple,margin:'4px 0 0 0',fontWeight:isOver?700:400}}>
+                  {isOver?`⚠️ ${Math.round((totalSpent/budget.amount)*100)}% used — Over budget!`:`${Math.round((totalSpent/budget.amount)*100)}% used`}
+                </p>
+              </div>
+            )}
+          </div>
+          <div style={{...C,padding:16}}>
+            <h3 style={{fontSize:13,fontWeight:700,color:t.text,margin:'0 0 12px 0'}}>Add Expense</h3>
+            <div style={{display:'flex',flexDirection:'column',gap:8}}>
+              <input value={form.description} onChange={e=>setForm({...form,description:e.target.value})}
+                placeholder="What did you spend on?" style={inputStyle}
                 onKeyDown={e=>e.key==='Enter'&&addExpense()}/>
+              <div style={{display:'flex',gap:8}}>
+                <select value={form.category} onChange={e=>setForm({...form,category:e.target.value})}
+                  style={{...inputStyle,flex:1}}>
+                  {categories.map(c=><option key={c}>{c}</option>)}
+                </select>
+                <input value={form.amount} onChange={e=>setForm({...form,amount:e.target.value})}
+                  placeholder="₹" type="number" style={{...inputStyle,width:120}}
+                  onKeyDown={e=>e.key==='Enter'&&addExpense()}/>
+              </div>
+              <button onClick={addExpense}
+                style={{borderRadius:12,padding:'10px',fontSize:13,fontWeight:700,color:'white',
+                  background:`linear-gradient(135deg,${t.pink},${t.purple})`,border:'none',cursor:'pointer',
+                  boxShadow:`0 4px 12px rgba(233,30,140,0.25)`}}>
+                Add Expense
+              </button>
             </div>
-            <button onClick={addExpense}
-              style={{borderRadius:12,padding:'10px',fontSize:13,fontWeight:700,color:'white',
-                background:`linear-gradient(135deg,${t.pink},${t.purple})`,border:'none',cursor:'pointer',
-                boxShadow:`0 4px 12px rgba(233,30,140,0.25)`}}>
-              Add Expense
-            </button>
           </div>
         </div>
-      </div>
 
-      {/* Expense list */}
-      <div style={{...C,padding:16}} ref={printRef}>
-        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:12}}>
-          <h3 style={{fontSize:13,fontWeight:700,color:t.text,margin:0}}>
-            Recent Expenses ({new Date(selectedMonth+'-01').toLocaleDateString('en-IN',{month:'long'})})
-          </h3>
-          <span style={{fontSize:12,color:t.purple,fontWeight:600}}>{monthExpenses.length} entries</span>
-        </div>
-        {monthExpenses.length===0&&
-          <p style={{fontSize:13,textAlign:'center',padding:'16px 0',color:t.subtext,margin:0}}>No expenses this month!</p>}
-        {monthExpenses.map((e)=>(
-          <div key={e.id} style={{display:'flex',alignItems:'center',justifyContent:'space-between',
-            padding:'10px 0',borderBottom:`1px solid ${t.border}`}}>
-            <div>
-              <p style={{fontSize:13,fontWeight:600,color:t.text,margin:0}}>{e.description}</p>
-              <p style={{fontSize:11,color:t.purple,margin:0}}>{e.category} · {e.date}</p>
-            </div>
-            <div style={{display:'flex',alignItems:'center',gap:12}}>
-              <p style={{fontSize:13,fontWeight:700,color:t.pink,margin:0}}>₹{e.amount}</p>
-              <button onClick={()=>deleteExpense(e.id)}
-                style={{background:'none',border:'none',cursor:'pointer',fontSize:14,opacity:0.4,padding:0}}>🗑</button>
-            </div>
+        {/* Expense list */}
+        <div style={{...C,padding:16}} ref={printRef}>
+          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:12}}>
+            <h3 style={{fontSize:13,fontWeight:700,color:t.text,margin:0}}>
+              Recent Expenses ({new Date(selectedMonth+'-01').toLocaleDateString('en-IN',{month:'long'})})
+            </h3>
+            <span style={{fontSize:12,color:t.purple,fontWeight:600}}>{monthExpenses.length} entries</span>
           </div>
-        ))}
+          {monthExpenses.length===0&&
+            <p style={{fontSize:13,textAlign:'center',padding:'16px 0',color:t.subtext,margin:0}}>No expenses this month!</p>}
+          {monthExpenses.map((e)=>(
+            <div key={e.id} style={{display:'flex',alignItems:'center',justifyContent:'space-between',
+              padding:'10px 0',borderBottom:`1px solid ${t.border}`}}>
+              <div>
+                <p style={{fontSize:13,fontWeight:600,color:t.text,margin:0}}>{e.description}</p>
+                <p style={{fontSize:11,color:t.purple,margin:0}}>{e.category} · {e.date}</p>
+              </div>
+              <div style={{display:'flex',alignItems:'center',gap:12}}>
+                <p style={{fontSize:13,fontWeight:700,color:t.pink,margin:0}}>₹{e.amount}</p>
+                <button onClick={()=>deleteExpense(e.id)}
+                  style={{background:'none',border:'none',cursor:'pointer',fontSize:14,opacity:0.4,padding:0}}>🗑</button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   )
