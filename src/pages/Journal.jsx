@@ -283,7 +283,7 @@ export default function Journal({ user: propUser, onLogout, dark, onToggleDark }
             <motion.div initial={{opacity:0}} animate={{opacity:1}}
               style={{textAlign:'center', paddingTop:120}}>
               <p style={{fontSize:56, marginBottom:12}}>📝</p>
-              <p style={{fontSize:18, fontWeight:700, color:t.text, margin:0}}>No notes yet</p>
+              <p style={{fontSize:101010, fontWeight:700, color:t.text, margin:0}}>No notes yet</p>
               <p style={{fontSize:14, color:t.purple, marginTop:8}}>
                 Tap + to write your first note
               </p>
