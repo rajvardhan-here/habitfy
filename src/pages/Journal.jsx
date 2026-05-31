@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import { motion, AnimatePresence } from 'framer-motion'
 import { TopBar } from './HabitTracker'
@@ -26,56 +26,25 @@ function MorpankhBg({ dark }) {
   const c2 = dark ? 'rgba(244,114,182,0.06)' : 'rgba(233,30,140,0.05)'
   const c3 = dark ? 'rgba(52,211,153,0.05)'  : 'rgba(16,185,129,0.06)'
   return (
-    <svg
-      style={{position:'fixed',top:0,left:0,width:'100%',height:'100%',
-        pointerEvents:'none',zIndex:0,overflow:'hidden'}}
+    <svg style={{position:'fixed',top:0,left:0,width:'100%',height:'100%',
+      pointerEvents:'none',zIndex:0,overflow:'hidden'}}
       viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice"
       xmlns="http://www.w3.org/2000/svg">
-
-      {/* Big feather — left */}
-      <g transform="translate(80,400) rotate(-30)">
-        <Feather scale={2.2} c1={c1} c2={c2} c3={c3}/>
-      </g>
-
-      {/* Big feather — right */}
-      <g transform="translate(1100,200) rotate(20)">
-        <Feather scale={2.0} c1={c1} c2={c2} c3={c3}/>
-      </g>
-
-      {/* Medium feather — top-center */}
-      <g transform="translate(600,50) rotate(5)">
-        <Feather scale={1.4} c1={c1} c2={c2} c3={c3}/>
-      </g>
-
-      {/* Small feather — bottom-right */}
-      <g transform="translate(950,650) rotate(-15)">
-        <Feather scale={1.1} c1={c1} c2={c2} c3={c3}/>
-      </g>
-
-      {/* Small feather — bottom-left */}
-      <g transform="translate(200,700) rotate(10)">
-        <Feather scale={1.0} c1={c1} c2={c2} c3={c3}/>
-      </g>
-
-      {/* Tiny scattered */}
-      <g transform="translate(400,150) rotate(-20)">
-        <Feather scale={0.7} c1={c1} c2={c2} c3={c3}/>
-      </g>
-      <g transform="translate(850,500) rotate(35)">
-        <Feather scale={0.6} c1={c1} c2={c2} c3={c3}/>
-      </g>
+      <g transform="translate(80,400) rotate(-30)"><Feather scale={2.2} c1={c1} c2={c2} c3={c3}/></g>
+      <g transform="translate(1100,200) rotate(20)"><Feather scale={2.0} c1={c1} c2={c2} c3={c3}/></g>
+      <g transform="translate(600,50) rotate(5)"><Feather scale={1.4} c1={c1} c2={c2} c3={c3}/></g>
+      <g transform="translate(950,650) rotate(-15)"><Feather scale={1.1} c1={c1} c2={c2} c3={c3}/></g>
+      <g transform="translate(200,700) rotate(10)"><Feather scale={1.0} c1={c1} c2={c2} c3={c3}/></g>
+      <g transform="translate(400,150) rotate(-20)"><Feather scale={0.7} c1={c1} c2={c2} c3={c3}/></g>
+      <g transform="translate(850,500) rotate(35)"><Feather scale={0.6} c1={c1} c2={c2} c3={c3}/></g>
     </svg>
   )
 }
 
 function Feather({ scale=1, c1, c2, c3 }) {
-  const s = scale
   return (
-    <g transform={`scale(${s})`}>
-      {/* Main quill stem */}
+    <g transform={`scale(${scale})`}>
       <path d="M0,0 Q5,80 0,200" stroke={c2} strokeWidth="2" fill="none"/>
-
-      {/* Barbs radiating out — left side */}
       {[20,40,60,80,100,120,140,160,180].map((y,i)=>{
         const spread = Math.sin((i/8)*Math.PI)*30
         return (
@@ -87,8 +56,6 @@ function Feather({ scale=1, c1, c2, c3 }) {
           </g>
         )
       })}
-
-      {/* Barbs radiating out — right side */}
       {[20,40,60,80,100,120,140,160,180].map((y,i)=>{
         const spread = Math.sin((i/8)*Math.PI)*28
         return (
@@ -100,14 +67,10 @@ function Feather({ scale=1, c1, c2, c3 }) {
           </g>
         )
       })}
-
-      {/* Eye of the peacock feather at top */}
       <ellipse cx="0" cy="14" rx="10" ry="14" fill={c2} opacity="0.5"/>
       <ellipse cx="0" cy="14" rx="7"  ry="10" fill={c3} opacity="0.6"/>
       <ellipse cx="0" cy="14" rx="4"  ry="6"  fill={c1} opacity="0.9"/>
       <circle  cx="0" cy="12" r="2"           fill={c2} opacity="0.8"/>
-
-      {/* Shimmer lines in barbs */}
       {[30,70,110,150].map((y,i)=>(
         <path key={`s${i}`}
           d={`M${-Math.sin(i)*18},${y} Q0,${y-4} ${Math.sin(i)*18},${y}`}
@@ -122,58 +85,107 @@ export default function Journal({ user: propUser, onLogout, dark, onToggleDark }
   const isMobile = window.innerWidth < 768
 
   const [entries,    setEntries]    = useState([])
-  const [user,       setUser]       = useState(propUser||null)
+  const [user,       setUser]       = useState(null)
   const [adding,     setAdding]     = useState(false)
   const [newContent, setNewContent] = useState('')
   const [saving,     setSaving]     = useState(false)
 
+  // ✅ FIX: Always get fresh user from Supabase — don't rely on propUser
+  const userRef = useRef(null)
+
   useEffect(()=>{
     supabase.auth.getUser().then(({data:{user}})=>{
-      setUser(user); if(user) fetchEntries(user.id)
+      if(user){
+        userRef.current = user
+        setUser(user)
+        fetchEntries(user.id)
+      }
     })
   },[])
 
-  const fetchEntries=async(uid)=>{
-    const {data}=await supabase.from('journal').select('*').eq('user_id',uid)
-      .order('pinned',{ascending:false}).order('date',{ascending:false})
-    setEntries(data||[])
+  // ✅ Also update when propUser changes
+  useEffect(()=>{
+    if(propUser && !userRef.current){
+      userRef.current = propUser
+      setUser(propUser)
+      fetchEntries(propUser.id)
+    }
+  },[propUser])
+
+  // ✅ FIX: Always use userRef.current — never null
+  const getUser = async () => {
+    if(userRef.current) return userRef.current
+    const { data } = await supabase.auth.getUser()
+    if(data?.user){
+      userRef.current = data.user
+      setUser(data.user)
+      return data.user
+    }
+    return null
   }
-  const saveNote=async()=>{
-    if(!newContent.trim()||!user) return
+
+  const fetchEntries = async (uid) => {
+    if(!uid) return
+    const { data, error } = await supabase
+      .from('journal')
+      .select('*')
+      .eq('user_id', uid)
+      .order('pinned', { ascending: false })
+      .order('date',   { ascending: false })
+    if(!error) setEntries(data || [])
+  }
+
+  const saveNote = async () => {
+    if(!newContent.trim()) return
     setSaving(true)
-    await supabase.from('journal').insert({
-      user_id:user.id, date:new Date().toISOString().split('T')[0],
-      content:newContent, pinned:false
+    // ✅ FIX: Always fetch fresh user before saving
+    const cu = await getUser()
+    if(!cu){ setSaving(false); return }
+
+    const { error } = await supabase.from('journal').insert({
+      user_id: cu.id,
+      date:    new Date().toISOString().split('T')[0],
+      content: newContent,
+      pinned:  false
     })
-    setNewContent(''); setAdding(false); setSaving(false); fetchEntries(user.id)
+
+    if(!error){
+      setNewContent('')
+      setAdding(false)
+      // ✅ FIX: Fetch entries again after save — with guaranteed uid
+      await fetchEntries(cu.id)
+    }
+    setSaving(false)
   }
-  const togglePin=async(entry)=>{
-    await supabase.from('journal').update({pinned:!entry.pinned}).eq('id',entry.id)
-    fetchEntries(user.id)
+
+  const togglePin = async (entry) => {
+    const cu = await getUser(); if(!cu) return
+    await supabase.from('journal').update({ pinned: !entry.pinned }).eq('id', entry.id)
+    fetchEntries(cu.id)
   }
-  const deleteNote=async(id)=>{
-    await supabase.from('journal').delete().eq('id',id); fetchEntries(user.id)
+
+  const deleteNote = async (id) => {
+    const cu = await getUser(); if(!cu) return
+    await supabase.from('journal').delete().eq('id', id)
+    fetchEntries(cu.id)
   }
-  const formatDate=(ds)=>new Date(ds).toLocaleDateString('en-IN',{
-    weekday:'short',day:'numeric',month:'short',year:'numeric'
+
+  const formatDate = (ds) => new Date(ds).toLocaleDateString('en-IN', {
+    weekday:'short', day:'numeric', month:'short', year:'numeric'
   })
 
   return (
     <div style={{minHeight:'100vh', background:t.bg, fontFamily:"'Inter',sans-serif",
       transition:'background 0.3s', position:'relative', overflow:'hidden'}}>
 
-      {/* ── Morpankh background overlay ── */}
       <MorpankhBg dark={dark}/>
 
-      {/* ── All content above the background ── */}
       <div style={{position:'relative', zIndex:1}}>
 
-        {/* ── TOP ROW: "Notes" left + TopBar right — same line ── */}
+        {/* TOP ROW */}
         <div style={{display:'flex', alignItems:'center', justifyContent:'space-between',
           padding: isMobile ? '12px 12px 0 12px' : '16px 24px 0 24px',
           flexWrap:'wrap', gap:8}}>
-
-          {/* Left: Title */}
           <div style={{display:'flex', alignItems:'center', gap:10}}>
             <h1 style={{fontSize:isMobile?20:26, fontWeight:900, color:t.text, margin:0}}>
               Notes 📝
@@ -182,15 +194,12 @@ export default function Journal({ user: propUser, onLogout, dark, onToggleDark }
               {new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'})}
             </p>
           </div>
-
-          {/* Right: TopBar with working R button */}
           <TopBar user={user} streak={0} onLogout={onLogout} dark={dark} onToggleDark={onToggleDark}/>
         </div>
 
-        {/* ── Content area ── */}
         <div style={{padding: isMobile ? 12 : 24, paddingTop:20}}>
 
-          {/* + Button — floating bottom right on mobile, inline on desktop */}
+          {/* + Floating button */}
           {!adding && (
             <motion.button
               whileHover={{scale:1.09}} whileTap={{scale:0.95}}
@@ -209,7 +218,7 @@ export default function Journal({ user: propUser, onLogout, dark, onToggleDark }
 
           {/* New Note Input */}
           <AnimatePresence>
-            {adding&&(
+            {adding && (
               <motion.div
                 initial={{opacity:0,y:-16}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-16}}
                 style={{background:t.card, borderRadius:20,
@@ -233,11 +242,14 @@ export default function Journal({ user: propUser, onLogout, dark, onToggleDark }
                         background:t.purpleLight, color:t.purple, border:'none', cursor:'pointer'}}>
                       Cancel
                     </button>
-                    <motion.button whileHover={{scale:1.04}} whileTap={{scale:0.96}}
+                    <motion.button
+                      whileHover={{scale:1.04}} whileTap={{scale:0.96}}
                       onClick={saveNote}
+                      disabled={saving}
                       style={{padding:'8px 20px', borderRadius:12, fontSize:13, fontWeight:700,
                         background:`linear-gradient(135deg,${t.pink},${t.purple})`,
-                        color:'white', border:'none', cursor:'pointer'}}>
+                        color:'white', border:'none', cursor:'pointer',
+                        opacity: saving ? 0.7 : 1}}>
                       {saving ? '✓ Saving...' : 'Save Note'}
                     </motion.button>
                   </div>
@@ -247,7 +259,7 @@ export default function Journal({ user: propUser, onLogout, dark, onToggleDark }
           </AnimatePresence>
 
           {/* Pinned Notes */}
-          {entries.filter(e=>e.pinned).length>0&&(
+          {entries.filter(e=>e.pinned).length > 0 && (
             <div style={{marginBottom:8}}>
               <p style={{fontSize:11,fontWeight:700,color:t.purple,letterSpacing:1,margin:'0 0 10px 0'}}>
                 📌 PINNED
@@ -262,9 +274,9 @@ export default function Journal({ user: propUser, onLogout, dark, onToggleDark }
           )}
 
           {/* All Notes */}
-          {entries.filter(e=>!e.pinned).length>0&&(
+          {entries.filter(e=>!e.pinned).length > 0 && (
             <div>
-              {entries.filter(e=>e.pinned).length>0&&
+              {entries.filter(e=>e.pinned).length > 0 &&
                 <p style={{fontSize:11,fontWeight:700,color:t.purple,letterSpacing:1,margin:'0 0 10px 0'}}>
                   🗒 ALL NOTES
                 </p>
@@ -279,11 +291,11 @@ export default function Journal({ user: propUser, onLogout, dark, onToggleDark }
           )}
 
           {/* Empty state */}
-          {entries.length===0&&!adding&&(
+          {entries.length === 0 && !adding && (
             <motion.div initial={{opacity:0}} animate={{opacity:1}}
               style={{textAlign:'center', paddingTop:120}}>
               <p style={{fontSize:56, marginBottom:12}}>📝</p>
-              <p style={{fontSize:101010, fontWeight:700, color:t.text, margin:0}}>No notes yet</p>
+              <p style={{fontSize:18, fontWeight:700, color:t.text, margin:0}}>No notes yet</p>
               <p style={{fontSize:14, color:t.purple, marginTop:8}}>
                 Tap + to write your first note
               </p>
@@ -302,8 +314,7 @@ function NoteCard({ entry, onPin, onDelete, formatDate, t, pinned }) {
     <motion.div
       initial={{opacity:0,y:8}} animate={{opacity:1,y:0}} exit={{opacity:0}}
       style={{
-        background: t.card,
-        borderRadius:20, padding:20,
+        background: t.card, borderRadius:20, padding:20,
         boxShadow: pinned
           ? `0 4px 24px rgba(233,30,140,0.18), 0 0 0 2px ${t.pink}`
           : `0 2px 20px ${t.shadow}`,
@@ -339,7 +350,7 @@ function NoteCard({ entry, onPin, onDelete, formatDate, t, pinned }) {
         WebkitLineClamp:expanded?'unset':4}}>
         {entry.content}
       </p>
-      {isLong&&(
+      {isLong && (
         <button onClick={()=>setExpanded(!expanded)}
           style={{marginTop:8,background:'none',border:'none',cursor:'pointer',
             fontSize:12,fontWeight:600,color:t.pink,padding:0}}>
