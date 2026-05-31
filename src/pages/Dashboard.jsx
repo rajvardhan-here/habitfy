@@ -175,7 +175,7 @@ export default function Dashboard() {
           })}
           <button onClick={handleLogout}
             style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, background: 'transparent', border: 'none', cursor: 'pointer', padding: '4px 20px', opacity: 0.6 }}>
-            <span style={{ fontSize: 22 }}>🚪</span>
+            <span style={{ fontSize: 24 }}>🚪</span>
             <span style={{ fontSize: 9, fontWeight: 700, color: '#EF4444' }}>Logout</span>
           </button>
         </div>
