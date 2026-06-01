@@ -353,7 +353,7 @@ function NoteCard({ entry, onPin, onDelete, formatDate, t, pinned }) {
       {isLong && (
         <button onClick={()=>setExpanded(!expanded)}
           style={{marginTop:8,background:'none',border:'none',cursor:'pointer',
-            fontSize:12,fontWeight:600,color:t.pink,padding:0}}>
+            fontSize:12,fontWeight:601,color:t.pink,padding:0}}>
           {expanded?'▲ Show less':'▼ Read more'}
         </button>
       )}
