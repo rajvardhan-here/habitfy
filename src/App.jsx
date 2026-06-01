@@ -23,8 +23,8 @@ function App() {
   }, [])
 
   if (loading) return (
-    <div style={{ minHeight: '100vh', background: '#FFE67C', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ color: '#285E2C', fontSize: 20, fontWeight: 700 }}>Loading...</div>
+    <div style={{ minHeight: '100vh', background: '#0D9488', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ color: '#ffffff', fontSize: 20, fontWeight: 700 }}>Loading...</div>
     </div>
   )
 
@@ -33,7 +33,6 @@ function App() {
       <Routes>
         <Route path="/login" element={!session ? <Login /> : <Navigate to="/habits" replace />} />
         <Route path="/" element={session ? <Navigate to="/habits" replace /> : <Navigate to="/login" replace />} />
-        {/* ✅ YAHA SE HATAO woh /finance redirect wali line */}
         <Route path="/*" element={session ? <Dashboard /> : <Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
