@@ -7,6 +7,10 @@ const HABIT_ICONS = ['💪','📚','💻','✍️','🧘','🎯','🏃','🎨','
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December']
 const DAYS   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']
 
+// ─── LOCAL DATE HELPER (fixes UTC offset bug — no more wrong date at night) ──
+const toLocalDateStr = (d) =>
+  `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
+
 // ─── Colour tokens ────────────────────────────────────────────────────────────
 const T = {
   light: {
@@ -138,7 +142,6 @@ export function TopBar({ user, streak=0, onLogout, dark, onToggleDark }) {
   },[menu])
 
   return (
-    /* No padding here — parent row controls spacing */
     <div style={{display:'flex',alignItems:'center',gap:8,flexWrap:'wrap'}}>
 
       {/* 🌙 / ☀️ */}
@@ -159,7 +162,7 @@ export function TopBar({ user, streak=0, onLogout, dark, onToggleDark }) {
         <span style={{fontWeight:600,color:t.text,fontSize:11}}>{todayLabel}</span>
       </div>
 
-      {/* Avatar + dropdown — FIXED: stopPropagation so outside-click closes it */}
+      {/* Avatar + dropdown */}
       <div style={{position:'relative'}} onClick={e=>e.stopPropagation()}>
         <button onClick={()=>setMenu(v=>!v)}
           style={{width:38,height:38,borderRadius:'50%',
@@ -239,7 +242,9 @@ export default function HabitTracker({ user: propUser, onLogout, dark, onToggleD
   const [editingHabit,  setEditingHabit]  = useState(null)
   const [editName,      setEditName]      = useState('')
 
-  // ✅ FIX 1 — Auto-select correct half based on today's date
+  // ✅ FIX — today uses LOCAL date, not UTC (fixes wrong date highlight at night in IST)
+  const today = toLocalDateStr(new Date())
+
   const todayDate = new Date().getDate()
   const [halfOffset, setHalfOffset] = useState(todayDate <= 15 ? 0 : 1)
 
@@ -249,7 +254,6 @@ export default function HabitTracker({ user: propUser, onLogout, dark, onToggleD
   },[])
 
   const isMobile = vw < 768
-  const today    = new Date().toISOString().split('T')[0]
   const firstName= user?.user_metadata?.name?.split(' ')[0]||'there'
 
   const getMonthHalfDates = () => {
@@ -258,7 +262,11 @@ export default function HabitTracker({ user: propUser, onLogout, dark, onToggleD
     const end   = halfOffset===0 ? 15 : days
     return Array.from({length:end-start+1},(_,i)=>{
       const day=start+i, d=new Date(selectedYear,selectedMonth,day)
-      return {label:d.toLocaleDateString('en-IN',{month:'short',day:'numeric'}),date:d.toISOString().split('T')[0]}
+      return {
+        label: d.toLocaleDateString('en-IN',{month:'short',day:'numeric'}),
+        // ✅ FIX — use local date string, not toISOString()
+        date: toLocalDateStr(d)
+      }
     })
   }
   const weekDates = getMonthHalfDates()
@@ -267,7 +275,11 @@ export default function HabitTracker({ user: propUser, onLogout, dark, onToggleD
     const days=new Date(y,m+1,0).getDate()
     return Array.from({length:days},(_,i)=>{
       const d=new Date(y,m,i+1)
-      return {date:`${i+1}`,fullDate:d.toISOString().split('T')[0]}
+      return {
+        date:`${i+1}`,
+        // ✅ FIX — use local date string, not toISOString()
+        fullDate: toLocalDateStr(d)
+      }
     })
   }
   const monthDays          = getDaysInMonth(selectedMonth,selectedYear)
@@ -287,7 +299,8 @@ export default function HabitTracker({ user: propUser, onLogout, dark, onToggleD
     if(data&&data.length>0){
       let s=0; const d=new Date()
       for(let i=0;i<365;i++){
-        const ds=d.toISOString().split('T')[0]
+        // ✅ FIX — use local date string in streak calculation too
+        const ds=toLocalDateStr(d)
         if(ds>today){d.setDate(d.getDate()-1);continue}
         if(data.every(h=>h.habit_logs&&h.habit_logs.some(l=>l.date===ds))){s++;d.setDate(d.getDate()-1)}
         else break
@@ -323,7 +336,6 @@ export default function HabitTracker({ user: propUser, onLogout, dark, onToggleD
     setHabits(prev=>prev.filter(h=>h.id!==id))
   }
 
-  // ✅ FIX 2 — Click habit name to edit inline
   const startEdit=(habit)=>{setEditingHabit(habit.id);setEditName(habit.name)}
   const saveEdit=async(habit)=>{
     if(!editName.trim()){setEditingHabit(null);return}
@@ -396,12 +408,11 @@ export default function HabitTracker({ user: propUser, onLogout, dark, onToggleD
         </div>
       )}
 
-      {/* ── Header row: greeting LEFT, TopBar RIGHT — same line ── */}
+      {/* ── Header row ── */}
       <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',
         flexWrap:'wrap',gap:10,
         padding: isMobile ? '12px 12px 0 12px' : '16px 24px 0 24px'}}>
 
-        {/* Left: greeting */}
         <div>
           <h1 style={{fontSize:isMobile?22:30,fontWeight:900,color:t.text,lineHeight:1.2,margin:0}}>
             Hello <span style={{color:t.pink}}>{firstName} ji,</span>
@@ -415,7 +426,6 @@ export default function HabitTracker({ user: propUser, onLogout, dark, onToggleD
             marginTop:5,borderRadius:2}}/>
         </div>
 
-        {/* Right: reuse TopBar (moon, streak, date, working R avatar) */}
         <TopBar user={user} streak={streak} onLogout={onLogout} dark={dark} onToggleDark={onToggleDark}/>
       </div>
 
@@ -572,7 +582,6 @@ export default function HabitTracker({ user: propUser, onLogout, dark, onToggleD
                     <div style={{width:isMobile?90:160,display:'flex',alignItems:'center',gap:5,flexShrink:0}}>
                       <span style={{fontSize:13}}>{HABIT_ICONS[hi%HABIT_ICONS.length]}</span>
 
-                      {/* ✅ FIX 2 — Click name to edit inline */}
                       {editingHabit===habit.id ? (
                         <input autoFocus value={editName}
                           onChange={e=>setEditName(e.target.value)}
