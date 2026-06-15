@@ -604,7 +604,7 @@ export default function HabitTracker({ user: propUser, onLogout, dark, onToggleD
 
                       <button onClick={()=>deleteHabit(habit.id)}
                         style={{background:'none',border:'none',cursor:'pointer',
-                          fontSize:13,color:t.subtext,padding:0,flexShrink:0}}>🗑</button>
+                          fontSize:14,color:t.subtext,padding:0,flexShrink:0}}>🗑</button>
                     </div>
 
                     {/* Checkboxes */}
