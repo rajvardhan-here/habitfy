@@ -48,7 +48,7 @@
 
   .vite {
     z-index: 0;
-    top: 107px;
+    top: 106px;
     height: 26px;
     width: auto;
     transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg)
@@ -112,7 +112,7 @@
   margin: 32px 0 0;
 
   .logo {
-    height: 18px;
+    height: 17px;
   }
 
   a {
