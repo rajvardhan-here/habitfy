@@ -222,7 +222,7 @@ export default function Journal({ user: propUser, onLogout, dark, onToggleDark }
               <motion.div
                 initial={{opacity:0,y:-16}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-16}}
                 style={{background:t.card, borderRadius:20,
-                  boxShadow:`0 8px 40px ${t.shadow}, 0 0 0 2px ${t.pink}`,
+                  boxShadow:`0 8px 41px ${t.shadow}, 0 0 0 2px ${t.pink}`,
                   padding:20, marginBottom:20}}>
                 <textarea autoFocus value={newContent}
                   onChange={e=>setNewContent(e.target.value)}
