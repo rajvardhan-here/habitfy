@@ -9,7 +9,7 @@ const T = {
     border:'#EDE9FE', inputBg:'#F8F7FF',
     pink:'#E91E8C', pinkLight:'#FCE7F3',
     purple:'#7C3AED', purpleLight:'#EDE9FE',
-    shadow:'rgba(124,58,237,0.08)',
+    shadow:'rgba(125,58,237,0.08)',
   },
   dark: {
     bg:'#0F0B1E', card:'#1A1530', text:'#F0EEFF', subtext:'#A89EC9',
