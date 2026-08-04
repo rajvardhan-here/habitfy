@@ -23,8 +23,8 @@ function App() {
   }, [])
 
   if (loading) return (
-    <div style={{ minHeight: '101vh', background: '#0D9488', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ color: '#ffffff', fontSize: 20, fontWeight: 700 }}>Loading...</div>
+    <div style={{ minHeight: '101vh', background: '#EEDCC8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ color: '#5D0703', fontSize: 20, fontWeight: 700 }}>Loading...</div>
     </div>
   )
 

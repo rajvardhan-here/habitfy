@@ -12,8 +12,8 @@ const AMBER  = '#F59E0B'
 
 const T = {
   light: {
-    bg:          '#7A97C9',
-    card:        '#FFFFFF',
+    bg:          '#EEDCC8',
+    card:        '#EEDCC8',
     text:        '#1E1B4B',
     subtext:     '#64748B',
     border:      '#EDE9FE',

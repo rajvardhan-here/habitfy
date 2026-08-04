@@ -5,8 +5,8 @@ import { TopBar } from './HabitTracker'
 
 const T = {
   light: {
-    bg:'#7A97C9', card:'#FFFFFF', text:'#1E1B4B', subtext:'#64748B',
-    border:'#EDE9FE', inputBg:'#F8F7FF',
+    bg:'#EEDCC8', card:'#EEDCC8', text:'#1E1B4B', subtext:'#64748B',
+    border:'#E0C9AF', inputBg:'#F5E6D5',
     pink:'#E91E8C', pinkLight:'#FCE7F3',
     purple:'#7C3AED', purpleLight:'#EDE9FE',
     shadow:'rgba(125,58,237,0.08)',

@@ -3,10 +3,11 @@ import { supabase } from '../lib/supabase'
 import { motion } from 'framer-motion'
 
 // ✅ NEW COLOUR PALETTE
-const PINK    = '#E91E8C'
-const PURPLE  = '#7C3AED'
+const PINK    = '#D15D72'
+const PURPLE  = '#B86B7A'
 const AMBER   = '#F59E0B'
-const DARK    = '#1E1B4B'
+const CHERRY  = '#5D0703'
+const CREAM   = '#EEDCC8'
 const TEAL    = '#0EA5E9'
 
 export default function Login() {
@@ -48,7 +49,7 @@ export default function Login() {
       alignItems: 'center', justifyContent: 'center',
       padding: '16px', position: 'relative', overflow: 'hidden',
       fontFamily: "'Inter', 'Segoe UI', sans-serif",
-      background: `linear-gradient(135deg, ${DARK} 0%, #2D1B69 40%, #1a0533 100%)`
+      background: `linear-gradient(135deg, ${CREAM} 0%, #F5E6D5 45%, ${PINK} 100%)`
     }}>
 
       {/* Floating emojis */}
@@ -64,8 +65,8 @@ export default function Login() {
       {/* Floating stat cards */}
       <motion.div style={{
         position: 'absolute', left: '3%', top: '20%',
-        background: 'rgba(233,30,140,0.12)', backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(233,30,140,0.3)', borderRadius: 16,
+        background: 'rgba(238,220,200,0.75)', backdropFilter: 'blur(10px)',
+        border: '1px solid rgba(209,93,114,0.3)', borderRadius: 16,
         padding: '10px 14px', minWidth: 130, pointerEvents: 'none'
       }}
         animate={{ y: [0, -8, 0] }}
@@ -80,8 +81,8 @@ export default function Login() {
 
       <motion.div style={{
         position: 'absolute', right: '5%', top: '18%',
-        background: 'rgba(124,58,237,0.15)', backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(124,58,237,0.3)', borderRadius: 16,
+        background: 'rgba(238,220,200,0.78)', backdropFilter: 'blur(10px)',
+        border: '1px solid rgba(91,7,3,0.18)', borderRadius: 16,
         padding: '10px 14px', pointerEvents: 'none', textAlign: 'center'
       }}
         animate={{ y: [0, -10, 0] }}
@@ -93,8 +94,8 @@ export default function Login() {
 
       <motion.div style={{
         position: 'absolute', left: '4%', bottom: '22%',
-        background: 'rgba(14,165,233,0.12)', backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(14,165,233,0.3)', borderRadius: 16,
+        background: 'rgba(238,220,200,0.78)', backdropFilter: 'blur(10px)',
+        border: '1px solid rgba(209,93,114,0.22)', borderRadius: 16,
         padding: '10px 14px', pointerEvents: 'none'
       }}
         animate={{ y: [0, 8, 0] }}
@@ -111,8 +112,8 @@ export default function Login() {
 
       <motion.div style={{
         position: 'absolute', right: '4%', bottom: '24%',
-        background: 'rgba(245,158,11,0.12)', backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(245,158,11,0.3)', borderRadius: 16,
+        background: 'rgba(238,220,200,0.78)', backdropFilter: 'blur(10px)',
+        border: '1px solid rgba(91,7,3,0.18)', borderRadius: 16,
         padding: '10px 14px', pointerEvents: 'none', minWidth: 120
       }}
         animate={{ y: [0, 8, 0] }}
@@ -129,12 +130,12 @@ export default function Login() {
         transition={{ duration: 0.5, ease: 'easeOut' }}
         style={{
           position: 'relative', zIndex: 10,
-          background: 'rgba(255,255,255,0.06)',
+          background: 'rgba(238,220,200,0.92)',
           backdropFilter: 'blur(20px)',
-          border: `1px solid rgba(233,30,140,0.25)`,
+          border: `1px solid rgba(209,93,114,0.25)`,
           borderRadius: 32, padding: '36px 32px',
           width: '100%', maxWidth: 360, textAlign: 'center',
-          boxShadow: `0 30px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(233,30,140,0.1), inset 0 1px 0 rgba(255,255,255,0.1)`
+          boxShadow: `0 30px 60px rgba(91,7,3,0.14), 0 0 0 1px rgba(209,93,114,0.08), inset 0 1px 0 rgba(255,255,255,0.3)`
         }}>
 
         {/* Logo */}
@@ -145,26 +146,26 @@ export default function Login() {
             background: `linear-gradient(135deg, ${PINK}, ${PURPLE})`,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             margin: '0 auto 16px auto', cursor: 'pointer',
-            boxShadow: `0 8px 24px rgba(233,30,140,0.4)`
+            boxShadow: `0 8px 24px rgba(209,93,114,0.35)`
           }}>
           <span style={{ color: 'white', fontWeight: 900, fontSize: 26 }}>H</span>
         </motion.div>
 
-        <h1 style={{ fontSize: 34, fontWeight: 900, color: 'white', margin: '0 0 6px 0', letterSpacing: '-0.5px' }}>
+        <h1 style={{ fontSize: 34, fontWeight: 900, color: CHERRY, margin: '0 0 6px 0', letterSpacing: '-0.5px' }}>
           Habitfy
         </h1>
-        <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', margin: '0 0 28px 0' }}>
+        <p style={{ fontSize: 13, color: 'rgba(93,7,3,0.68)', margin: '0 0 28px 0' }}>
           Track habits. Build streaks. Live better.
         </p>
 
         {/* Features */}
         <div style={{
           marginBottom: 28, padding: '16px',
-          background: 'rgba(124,58,237,0.1)',
-          border: '1px solid rgba(124,58,237,0.2)',
+          background: 'rgba(255,255,255,0.35)',
+          border: '1px solid rgba(209,93,114,0.18)',
           borderRadius: 20
         }}>
-          <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: 2, color: 'rgba(255,255,255,0.4)', margin: '0 0 14px 0' }}>
+          <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: 2, color: 'rgba(93,7,3,0.5)', margin: '0 0 14px 0' }}>
             FREE FOR STUDENTS
           </p>
           <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0 4px' }}>
@@ -173,14 +174,14 @@ export default function Login() {
                 style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
                 <div style={{
                   width: 44, height: 44, borderRadius: 14,
-                  background: i % 2 === 0 ? `rgba(233,30,140,0.15)` : `rgba(124,58,237,0.15)`,
-                  border: `1px solid ${i % 2 === 0 ? 'rgba(233,30,140,0.3)' : 'rgba(124,58,237,0.3)'}`,
+                  background: i % 2 === 0 ? `rgba(209,93,114,0.12)` : `rgba(91,7,3,0.08)`,
+                  border: `1px solid ${i % 2 === 0 ? 'rgba(209,93,114,0.24)' : 'rgba(91,7,3,0.18)'}`,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 18, color: i % 2 === 0 ? PINK : '#A78BFA', fontWeight: 900,
+                  fontSize: 18, color: i % 2 === 0 ? PINK : CHERRY, fontWeight: 900,
                 }}>
                   {f.icon}
                 </div>
-                <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.65)' }}>{f.label}</span>
+                <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(93,7,3,0.72)' }}>{f.label}</span>
               </motion.div>
             ))}
           </div>
@@ -198,7 +199,7 @@ export default function Login() {
             borderRadius: 14, padding: '14px',
             background: `linear-gradient(135deg, ${PINK}, ${PURPLE})`,
             border: 'none', cursor: 'pointer',
-            boxShadow: `0 4px 16px rgba(233,30,140,0.35)`
+            boxShadow: `0 4px 16px rgba(209,93,114,0.32)`
           }}>
           <img src="https://www.google.com/favicon.ico" style={{ width: 16, height: 16 }} alt="G" />
           <span style={{ fontWeight: 800, color: 'white', fontSize: 14 }}>
@@ -206,7 +207,7 @@ export default function Login() {
           </span>
         </motion.button>
 
-        <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', margin: '16px 0 0 0' }}>
+        <p style={{ fontSize: 11, color: 'rgba(93,7,3,0.45)', margin: '16px 0 0 0' }}>
           Free forever · No credit card needed
         </p>
       </motion.div>
@@ -214,7 +215,7 @@ export default function Login() {
       {/* Footer */}
       <motion.div whileHover={{ scale: 1.05 }}
         style={{ position: 'absolute', bottom: 20, opacity: 0.5 }}>
-        <span style={{ fontSize: 11, fontWeight: 700, color: 'white' }}>Made with 💜 by EFFORTS</span>
+        <span style={{ fontSize: 11, fontWeight: 700, color: CHERRY }}>Made with 💜 by EFFORTS</span>
       </motion.div>
     </div>
   )
