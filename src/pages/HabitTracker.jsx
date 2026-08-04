@@ -14,7 +14,7 @@ const toLocalDateStr = (d) =>
 // ─── Colour tokens ────────────────────────────────────────────────────────────
 const T = {
   light: {
-    bg:'#F3F0FF', card:'#FFFFFF', text:'#1E1B4B', subtext:'#64748B',
+    bg:'#7A97C9', card:'#FFFFFF', text:'#1E1B4B', subtext:'#64748B',
     border:'#EDE9FE', inputBg:'#F8F7FF',
     pink:'#E91E8C', pinkLight:'#FCE7F3',
     purple:'#7C3AED', purpleLight:'#EDE9FE',
