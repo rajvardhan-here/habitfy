@@ -12,14 +12,14 @@ const AMBER  = '#F59E0B'
 
 const T = {
   light: {
-    bg:          '#EEDCC8',
-    card:        '#EEDCC8',
+    bg:          '#F0EDE5',
+    card:        '#E8E0D2',
     text:        '#1E1B4B',
     subtext:     '#64748B',
-    border:      '#EDE9FE',
+    border:      '#D6CBBF',
     pink:        PINK,
     purple:      PURPLE,
-    sidebar:     '#D15D72',
+    sidebar:     '#004643',
     shadow:      'rgba(124,58,237,0.15)',
   },
   dark: {

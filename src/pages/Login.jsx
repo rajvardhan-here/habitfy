@@ -3,11 +3,11 @@ import { supabase } from '../lib/supabase'
 import { motion } from 'framer-motion'
 
 // ✅ NEW COLOUR PALETTE
-const PINK    = '#D15D72'
-const PURPLE  = '#B86B7A'
+const PINK    = '#004643'
+const PURPLE  = '#0B6B63'
 const AMBER   = '#F59E0B'
-const CHERRY  = '#5D0703'
-const CREAM   = '#EEDCC8'
+const CHERRY  = '#004643'
+const CREAM   = '#F0EDE5'
 const TEAL    = '#0EA5E9'
 
 export default function Login() {
@@ -49,7 +49,7 @@ export default function Login() {
       alignItems: 'center', justifyContent: 'center',
       padding: '16px', position: 'relative', overflow: 'hidden',
       fontFamily: "'Inter', 'Segoe UI', sans-serif",
-      background: `linear-gradient(135deg, ${CREAM} 0%, #F5E6D5 45%, ${PINK} 100%)`
+      background: `linear-gradient(135deg, ${CREAM} 0%, #E8E0D2 45%, ${PINK} 100%)`
     }}>
 
       {/* Floating emojis */}
@@ -65,8 +65,8 @@ export default function Login() {
       {/* Floating stat cards */}
       <motion.div style={{
         position: 'absolute', left: '3%', top: '20%',
-        background: 'rgba(238,220,200,0.75)', backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(209,93,114,0.3)', borderRadius: 16,
+        background: 'rgba(240,237,229,0.75)', backdropFilter: 'blur(10px)',
+        border: '1px solid rgba(0,70,67,0.22)', borderRadius: 16,
         padding: '10px 14px', minWidth: 130, pointerEvents: 'none'
       }}
         animate={{ y: [0, -8, 0] }}
@@ -81,8 +81,8 @@ export default function Login() {
 
       <motion.div style={{
         position: 'absolute', right: '5%', top: '18%',
-        background: 'rgba(238,220,200,0.78)', backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(91,7,3,0.18)', borderRadius: 16,
+        background: 'rgba(240,237,229,0.8)', backdropFilter: 'blur(10px)',
+        border: '1px solid rgba(0,70,67,0.18)', borderRadius: 16,
         padding: '10px 14px', pointerEvents: 'none', textAlign: 'center'
       }}
         animate={{ y: [0, -10, 0] }}
@@ -94,8 +94,8 @@ export default function Login() {
 
       <motion.div style={{
         position: 'absolute', left: '4%', bottom: '22%',
-        background: 'rgba(238,220,200,0.78)', backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(209,93,114,0.22)', borderRadius: 16,
+        background: 'rgba(240,237,229,0.8)', backdropFilter: 'blur(10px)',
+        border: '1px solid rgba(0,70,67,0.18)', borderRadius: 16,
         padding: '10px 14px', pointerEvents: 'none'
       }}
         animate={{ y: [0, 8, 0] }}
@@ -112,8 +112,8 @@ export default function Login() {
 
       <motion.div style={{
         position: 'absolute', right: '4%', bottom: '24%',
-        background: 'rgba(238,220,200,0.78)', backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(91,7,3,0.18)', borderRadius: 16,
+        background: 'rgba(240,237,229,0.8)', backdropFilter: 'blur(10px)',
+        border: '1px solid rgba(0,70,67,0.18)', borderRadius: 16,
         padding: '10px 14px', pointerEvents: 'none', minWidth: 120
       }}
         animate={{ y: [0, 8, 0] }}
@@ -130,12 +130,12 @@ export default function Login() {
         transition={{ duration: 0.5, ease: 'easeOut' }}
         style={{
           position: 'relative', zIndex: 10,
-          background: 'rgba(238,220,200,0.92)',
+          background: 'rgba(240,237,229,0.92)',
           backdropFilter: 'blur(20px)',
-          border: `1px solid rgba(209,93,114,0.25)`,
+          border: `1px solid rgba(0,70,67,0.25)`,
           borderRadius: 32, padding: '36px 32px',
           width: '100%', maxWidth: 360, textAlign: 'center',
-          boxShadow: `0 30px 60px rgba(91,7,3,0.14), 0 0 0 1px rgba(209,93,114,0.08), inset 0 1px 0 rgba(255,255,255,0.3)`
+          boxShadow: `0 30px 60px rgba(0,70,67,0.12), 0 0 0 1px rgba(0,70,67,0.08), inset 0 1px 0 rgba(255,255,255,0.3)`
         }}>
 
         {/* Logo */}
@@ -146,7 +146,7 @@ export default function Login() {
             background: `linear-gradient(135deg, ${PINK}, ${PURPLE})`,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             margin: '0 auto 16px auto', cursor: 'pointer',
-            boxShadow: `0 8px 24px rgba(209,93,114,0.35)`
+            boxShadow: `0 8px 24px rgba(0,70,67,0.32)`
           }}>
           <span style={{ color: 'white', fontWeight: 900, fontSize: 26 }}>H</span>
         </motion.div>
@@ -154,7 +154,7 @@ export default function Login() {
         <h1 style={{ fontSize: 34, fontWeight: 900, color: CHERRY, margin: '0 0 6px 0', letterSpacing: '-0.5px' }}>
           Habitfy
         </h1>
-        <p style={{ fontSize: 13, color: 'rgba(93,7,3,0.68)', margin: '0 0 28px 0' }}>
+        <p style={{ fontSize: 13, color: 'rgba(0,70,67,0.68)', margin: '0 0 28px 0' }}>
           Track habits. Build streaks. Live better.
         </p>
 
@@ -162,10 +162,10 @@ export default function Login() {
         <div style={{
           marginBottom: 28, padding: '16px',
           background: 'rgba(255,255,255,0.35)',
-          border: '1px solid rgba(209,93,114,0.18)',
+          border: '1px solid rgba(0,70,67,0.16)',
           borderRadius: 20
         }}>
-          <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: 2, color: 'rgba(93,7,3,0.5)', margin: '0 0 14px 0' }}>
+          <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: 2, color: 'rgba(0,70,67,0.55)', margin: '0 0 14px 0' }}>
             FREE FOR STUDENTS
           </p>
           <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0 4px' }}>
@@ -174,14 +174,14 @@ export default function Login() {
                 style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
                 <div style={{
                   width: 44, height: 44, borderRadius: 14,
-                  background: i % 2 === 0 ? `rgba(209,93,114,0.12)` : `rgba(91,7,3,0.08)`,
-                  border: `1px solid ${i % 2 === 0 ? 'rgba(209,93,114,0.24)' : 'rgba(91,7,3,0.18)'}`,
+                  background: i % 2 === 0 ? `rgba(0,70,67,0.12)` : `rgba(0,70,67,0.08)`,
+                  border: `1px solid ${i % 2 === 0 ? 'rgba(0,70,67,0.24)' : 'rgba(0,70,67,0.18)'}`,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: 18, color: i % 2 === 0 ? PINK : CHERRY, fontWeight: 900,
                 }}>
                   {f.icon}
                 </div>
-                <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(93,7,3,0.72)' }}>{f.label}</span>
+                <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(0,70,67,0.72)' }}>{f.label}</span>
               </motion.div>
             ))}
           </div>
@@ -199,7 +199,7 @@ export default function Login() {
             borderRadius: 14, padding: '14px',
             background: `linear-gradient(135deg, ${PINK}, ${PURPLE})`,
             border: 'none', cursor: 'pointer',
-            boxShadow: `0 4px 16px rgba(209,93,114,0.32)`
+            boxShadow: `0 4px 16px rgba(0,70,67,0.32)`
           }}>
           <img src="https://www.google.com/favicon.ico" style={{ width: 16, height: 16 }} alt="G" />
           <span style={{ fontWeight: 800, color: 'white', fontSize: 14 }}>
@@ -207,7 +207,7 @@ export default function Login() {
           </span>
         </motion.button>
 
-        <p style={{ fontSize: 11, color: 'rgba(93,7,3,0.45)', margin: '16px 0 0 0' }}>
+        <p style={{ fontSize: 11, color: 'rgba(0,70,67,0.48)', margin: '16px 0 0 0' }}>
           Free forever · No credit card needed
         </p>
       </motion.div>
