@@ -46,7 +46,7 @@ function WaterBowl({ percent, t }) {
           </defs>
           <ellipse cx="55" cy="58" rx="46" ry="46" fill={t.purpleLight} stroke={t.purple} strokeWidth="2.5"/>
           <g clipPath="url(#bowlClip)">
-            <rect x="0" y={12+waveY*0.88} width="110" height="110" fill="url(#waterGrad)" opacity="0.85"/>
+            <rect x="0" y={12+waveY*0.88} width="111" height="110" fill="url(#waterGrad)" opacity="0.85"/>
             <motion.path
               d={`M-10,${12+waveY*0.88} C15,${12+waveY*0.88-7} 40,${12+waveY*0.88+7} 65,${12+waveY*0.88} C90,${12+waveY*0.88-7} 110,${12+waveY*0.88+5} 130,${12+waveY*0.88} L130,110 L-10,110 Z`}
               fill={t.pink} opacity={0.5} animate={{x:[0,-50,0]}} transition={{duration:2,repeat:Infinity,ease:'linear'}}/>
